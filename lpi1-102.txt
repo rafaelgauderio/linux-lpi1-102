@@ -1,0 +1,33 @@
+105. SHELL E SHELL SCRIPTING
+
+	Arquivos de configuração global aplicados a todos os usuários
+
+# cat /etc/profile - primeiro arquivo executado no login
+# cat /etc/profile.d/ - diretorio dos scripts
+# cat /etc/bash.bashrc - Toda nova sessao de shell bash
+# cat /etc/inputrc - Custmização de teclado e do terminal
+# cat /etc/skel/ - esses arquivos vao para o home de todo novo usuario
+
+	Arquivos de configuracao local
+	Os arquivos que começam com . são ocultos
+# cat ~/.bash_profile - executado após o etc/profile
+# cat ~/.bash_login - executado se nao existir o arquivo acima
+# cat ~/.profile - executado se nao existir o arquivo acima
+# cat ~/bashrc - executado apos o /etc/bash.bashrc
+# cat ~/.inputrc - nivel de usuario para customizacao de teclado e opcoes de terminal
+# cat ~/.bash_logout - executado durante o logout 
+
+	Configuracoes locais podem sobrescreve as globais
+# cd /home/lpi1/Exercicios
+# TESTE="Valor"
+# env | grep TESTE
+# set | grep TESTE - encontra sem ter exportado
+	4 maneiras de executar um script	
+# source Script_Variavel.sh - executa o shell local, encontra variavel local
+# . Script_variavel.sh - roda localmente
+# exec ./Script_variavel.sh - Executa e fecha o script
+# ./Script_variavel.sh - nao acha o valor da variavel TESTE, tem que ter a permissao
+# export TESTE
+# chmod +x Script_Variavel.sh == # chmod ugo+x Script_Variavel.sh
+
+	
