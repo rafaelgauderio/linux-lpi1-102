@@ -1,5 +1,8 @@
 105. SHELL E SHELL SCRIPTING
 
+	Customizacao do Shell
+		-> Deixar um funcao sempre disponivel (global ou localmente)
+		-> configuracoes feitas atraves de arquivos
 	Arquivos de configuração global aplicados a todos os usuários
 
 # cat /etc/profile - primeiro arquivo executado no login
@@ -29,5 +32,147 @@
 # ./Script_variavel.sh - nao acha o valor da variavel TESTE, tem que ter a permissao
 # export TESTE
 # chmod +x Script_Variavel.sh == # chmod ugo+x Script_Variavel.sh
+
+# alias dt="date +%h:%m"	# dt
+# alias - mostra todos os alias do bash atual
+
+	Maneiras de definir uma funcao nos scripts
+# set - mostra todas as funcoes definidas
+# function funcao1 {
+	> date;
+	> uptime;
+	> echo "Fim da funcao1";
+	>}
+# funcao1	
+# function funcao2 { data; uptime; ls -a; }
+# function funcao3() {uptime; uname -v; hostname; }
+
+# chsh - change login shell = altera o shell utilizado pelo usuario
+# vim ~/.profile
+	PATH=$/HOME/Scripts:$HOME/BIN...
+# echo $PATH
+# PrimeiroScript.sh = Agora encontra o script, pois o Home/Scripts tambem esta na lista de busca do PATH
+	Informar qual linguagem utiliza, sem ser o bash
+#!/bin/perl	#!/bin/bash	#!/bin/csh
+
+	Colocado parametros nos scripts
+	$0= nome do Script	$1=paramentro1	$2=paramentro2
+# ./PrimeiroScript.sh 17 Rafael
+	Declarando variaveis
+	VARIAVEL1="texto"	VARIAVEL2=35	VARIAVEL4=`cat /etc/passwd | wl -l`
+	VARIAVEL5=$(date + %H:%M:%S)
+# $VARIAVEL1	# $VARIAVEL=4
+
+	Comando teste expressao
+# test -f /etc/profile		# teste [-f /etc/profile]
+	-f file
+	-d directory
+	-r permissao read
+	-w permissao write
+	-x permissao execute
+	-s Tamanho é maior que zero
+	
+	Comparando variaveis (verifica se a variável é...)
+# -n $VAR1	non zero
+# -z $VAR1	zero 
+# $VAR1		verdadeiro se $VAR != nulo
+# String1 = String2 - Compara se são iguais as Strings
+# String1 != String2 - Compara se são diferentes as String
+
+	Comparação de Valores Numéricos (Verdadeiro se...)
+# Valor1 -eq Valor2 - equal
+# Valor1 -ne Valor2 - not equal
+# Valor1 -gt Valor2 - greater than
+# Valor1 -ge Valor2 - greater or equal
+# Valor1 -lt Valor2 - less than
+# Valor1 -le Valor2 - less or equal
+
+	Estruturas lógicas
+# echo $? -> 0 = Sucesso
+	  -> 1 = Error
+# test -f /etc/profile : testa de o arquivo existe
+# test 10 -gt 35 = 1
+# test 10 -lt 35 = 0
+
+# vim /etc/profile
+	if [ "`id -u` -eq 0 ] ; then
+		PSI='#'
+	else 
+		PSI='$'
+	fi
+# vim /etc/bash.bashrc	= exemplo de script
+# vim /home/rafael/scripts/PrimeiroScrit.sh
+		case Variavel in
+			0)
+				echo "Você escolheu zero"
+				sleep 15
+			;;
+			1/2/3/4)
+				echo "Você escolheu diferente de zero"
+			;;
+			*)
+		esac
+
+Rotinas de loop - for e while
+# seq 10   -> 1,2,3,4...10
+# expr	1 + 2   -> 3 (tem que haver os espaços)
+
+# /home/rafael/Scripts/. for_Script.sh 15	-> Script com parametro	
+	VAR1=10
+	for
+		i in `seq 7`	
+	do
+		j= $(expr $i + VAR1)
+		echo "$i + $VAR1 = $j"
+		sleep 1
+	done
+
+while = executa um loop enquanto uma condição for verdadeira
+
+	while [ $VAR1 -le $1]
+	do
+		echo "-le = less or equal"
+		VAR1 = $( expr $ VAR1 + 1 )  -> contador
+		sleep 1
+	done
+
+until = similiar ao while. Coloca uma igualdade e executa até que o 
+chegue até o determinado valor.
+	until [ $VAR1 = 0 ]
+		do
+			echo "Fazer até chegar no valor binário do until"
+			VAR1 = $ ( expr $VAR1 - 1)
+			slepp 0.5
+		done
+diferença while e until
+	until = até que = operador binário
+	while = enquanto = operador condicionar = lessn than, less or equal, not equal
+
+------------------------------------------------------------
+	COMANDO SEQUENCIAIS NO LINUX
+ 
+ # cat /home/rafael teste.txt | wc -l   = conta as linha do arquivo teste.txt 
+	; = executa o próximo mesmo que haja um erro
+ # date ; ls -l arquivo_grande.txt ; echo Exemplo
+	&& = executa o 2º comando somente se o 1º funcionar
+ # ls -l arquivo_novo.txt && echo Exeplo && date
+	|| = executa o 2º comando somente se o 1º NÃO funcionar
+ # ls -l arquivo_inexistente || echo nova_mensagem && echo final
+ # apt install mailutils
+ # mail -s "Assusto do email" root < teste.txt
+ # ls -l arquivo_novo || mail -s "Esse arquivo não existe" root <.
+
+	
+	
+			
+			
+
+
+
+
+
+	
+	
+	
 
 	
