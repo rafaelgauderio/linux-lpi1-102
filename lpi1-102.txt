@@ -162,6 +162,77 @@ diferença while e until
  # mail -s "Assusto do email" root < teste.txt
  # ls -l arquivo_novo || mail -s "Esse arquivo não existe" root <.
 
+------------------------------------------------------------------
+	INTERFACE DE USUARIOS E DESKTOP
+
+x funciona como interface cliente-servidor.
+KDE, GNOME, MATE = desktop enviroment = conjunto de aplicações com finalidade
+	de desenvovler a interface gráfica amigável com o usuário
+ # xcal 
+ # cd /etc/X11	
+ # ls -l xorg.conf
+ # ps axu | grep X -> interface gráfica roda normalmente no # tty 7
+ # crtl + alt + function +F1 = alteraa para tty1
+ # systemctl isolate multi-user.target
+ # Xorg-configure	# cd /root	# ls -l xorg.conf.new
+ # cp /root/xorg.conf.new  /etc/X11/xorg.conf
+ # ifconfig		#  pign [Ips das máquinas server e depois cliente]
+ # echo $DISPLAY -> mostra em qual shell vai executar o programa 
+			:0.0	== localhost.infodisplay
+ # export DISPLAY="10.0.0.106:0.0"	# echo DISPLAY
+ 	na máquina cliente
+ # xhost
+ # xhost + 10.0.0.105 = libera a máquina
+ # xhoys +server1domain.com
+ # xhost + = desabilita o controle de acesso
+ # ps axu | grep X
+ # cd /usr/lightdm/lightdm.conf/
+ # vi so-xserver-command.conf
+		add line
+			xserver-allow-tcp=true:wq
+ # systemctl restart lightdm
+	na máquina server
+ # xcal
+ # gnome 
+ # update-alternatives -- display x-windows-manager
+ # ls -l /etc/alteratives | grep window
+ # cd /etc/X11
+ # man xorg.conf
+ # cd /usr/share/X11/xorg.conf.d/
+ 	liberação de aplicação remota
+	copiar essa hash do MIT-MAGIG-COOKIE e colar nos server
+ # xauth list
+ # cat Xauthority
+	na máquina server
+ # xauth add 192.168.113.0 MIT-MAGIC-COKKIE [hash number do server]
+ # gnome-calculator - vai ter que aparecer no cliente
+
+		PROCOLOS DE ACESSO REMOTO 
+XDMCP = x Display Manager Control Protocol
+VNC = Virtual Networking COmputing - utilizad protocolo RFB
+SPICE = Silmple Protocol for independent Computing Environment = Open Source
+RDP = Remote Desktop Protocol = Microsoft
+
+# apt-get install kmag = forma de aumentar o tamanho da tela
+# cat #HOME/.xsession-errors  = confirir logs referente a sua sessao no servidor
+
+
+
+
+	
+
+	
+			
+
+ 
+ 
+
+
+
+
+
+
+
 	
 	
 			
