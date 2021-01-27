@@ -1,0 +1,167 @@
+﻿102.6 VIRTUALIZAÇÃO E LINUX
+
+
+
+
+Maquina Virtual = Emulacao de uma máquina real
+
+Container = aplicação com solução completa
+docker = gerenciador de container
+
+	  = não tem SO, usa o kernel do Host
+
+	
+
+	App1
+
+VM {		Bin/Libs
+
+		SO guest
+
+
+		Hypervisor
+
+		SO Host
+	
+	infraestrtutura
+
+
+
+
+Container {	App1
+
+		Bin/libs
+
+
+		Container Engine
+
+		SO Host
+
+		infraestrutura
+
+
+
+Hypervisor
+
+	 VMware, VirtualBox, Hyper-V, Xen, XenServer, Linux KVM
+
+
+
+Container, Daemons, Engines, Managers
+	
+	Docker
+
+	LXC / LXD
+
+
+
+Guest / Device Drivers
+-> São pacotes instalados para melhorar a usabilidade do SO Guest.
+
+	Guest Additions (VirtualBox)
+
+	VMware tools (VMware)
+
+
+
+Tipos de Virtualização
+
+
+	1 -> Virtualização Completa (HVM)
+		A Vm utiliza uma réplica do hardware utilizado
+
+		Não é necessária modificar o So do Guest
+
+		Requer suporte da CPU
+
+
+	2 -> Paravirtualização (PV)
+
+		O SO sabe que está em uma VM.
+
+		O SO guest interage diratamento com o Hypervisor
+
+		Não requer suporte a CPU
+	
+		Uso de paravirtual drivers. Exemplo: Virtlo (KVM), Xen
+
+
+
+IMAGENS (ISO)
+	
+
+	Definição estática de que será o container após inicialização.
+
+	Pode incluir o So, os softwares, bibliotecas, aplicações.
+
+	Fotografias do ambiente.
+
+
+
+IMAGENS - CLOUD-INIT
+
+	Cloud instance initianizations software
+	Permite a customização de uma imagem
+
+	Configurado através de um conjunto de instruções: cloud-config
+
+	Ex: Instalado um Maria DB na image, subir ela já com softawares espcíficos
+
+
+
+D-BUS MACHINE
+
+	É o identificador único de um container ou máquina virtual
+
+	# cat /etc/machine-id
+		# systemd-machine-id-setup --print
+
+
+---------------------------------------------------------------------------------
+
+
+AMAZON
+	
+
+	aws.amazon.com/pt/ec2
+
+	para acessar a máquina
+		# ssh -i nome-da-maquina.pen ec2-user@public DNS (IPV4)
+
+
+	# cat /proc/cpuinfo | grep hypervisor = senão mostrar nada é um máquina real
+	#
+ dmesg | grep Hypervisor = máquina real não retorna nada
+	# virt-what = na máquina real tb não mostra nada
+
+	# dmidecode -t system = na máquina real não retorna nada
+
+	# lshw -class system = mostra se é real ou virtual
+
+	# hostnamectl status = mostra se é vm ou real
+
+	# systemd-detect-virt = só detecta na vm
+
+
+
+DOCKER
+	
+	# apt-get install docker
+
+	# systemctl start docker
+		# systemctl status docker
+
+	# docker ps
+
+	# docker run -ti centos
+	# cat /etc/redhat-release
+
+	# docker run -ti suse
+
+	# docker run -ti debian
+	
+	
+			
+
+	
+

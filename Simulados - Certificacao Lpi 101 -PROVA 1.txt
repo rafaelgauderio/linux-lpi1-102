@@ -1,0 +1,759 @@
+﻿BANCO DE QUESTOES - lpi1 100
+
+PROVA 01 - CURSO SIMULADOS LPI1
+
+1. Primeira partição do sistema a ser montada após o processo de boot?
+= / = primeiro montado é o diretório raiz
+= Após isso vai para o /etc - arquivos de configuração /etc/fstab
+
+2. Comando sobre informacao?
+= man, whatis, info, comando --help
+
+3. Comandos poderão exibir as mensagens geradas pelo kernel durante o processo de boot?
+# journalctl -k --dmesg
+# dmesg
+
+4. Onde ficam os manuais?
+# cd /usr/share
+# cat /usr/share/doc	
+# cat /usr/share/man
+
+5. Soluções de init
+= SysV (runlevel), systemd (Units, target), Upstart
+
+6. Comandos e sair e salvar no VI
+= :wq	:x	ZZ
+
+7. tipos principais de particoes? 
+= 0x82 - swap	|	0x83 - Linux Native
+
+8. Arquivos de configurações do grub
+GRUB2 # cat /etc/default/grub
+isntall-grup	update-grub	grub-mkconfig
+GRUB Legacy # cat /boot/grub/menu.lst
+
+9. Divisão padrão do comando split
+= 1000 linhas, -l informas a quantidade de linhas, -b definir em bytes
+
+10. Bibliotecas compartilhadas
+# ldd - exibe as bibliotecas compartilhadas
+# ldconfig - atualizar a base de diretórios em que as bibliotecas compartilhadas podem ser encontradas
+# cat /etc/ld.so.cache com base as configuracoes do # cat /etc/ld.so.conf
+
+11. qual arquivo de configuração podem ser encontrados os repositórios de pacotes utilizados pelo APT?
+# cat /etc/apt/sources.list
+
+12. o Debian pode ser utilizada para reconfigurar um pacote já instalado?
+# dpkg-reconfigure
+
+13. MBR (MASTER BOOT RECORD)
+= Contem info utilizadas no processo de boot, info sobre particoes, 
+carrega o execu o Bootloader (GRUB), localizada no primeiro setor de disco bootável
+= BIOS - faz o POST (Power On Self Test)
+= Kernel - inicia o init
+
+14. Definicao de variável
+# VARIAVEL="Certificacao Linux" 
+Agrupar Strings por aspas
+
+15. Mandeiras de insercao no vim
+i - edicao na na posicao do cursor - insert
+a - edicao na na posicao seguinte ao cursor - append
+I - edicao no começo da linha
+A - edicao no final da linha
+o - insere na linha abaixo
+O - insere na linha acima
+
+15. Exportcao de variaveis # export VARIAVEL
+# env - GLOBAIS (exportadas)
+# set - LOCAIS + GLOBAIS
+
+16. Algoritmos de compactacao
+= xz, bzip2, gzip - compactar
+= unxz, bunzip2, gunzip - descompactar
+
+17. Maneiras de definir grupo
+# chgro grupo arquivo
+# chown .grupo arquivo
+# chown :grupo arquivo
+
+18. Comando para numeras linhas, sem as linhas em branco
+# cat -b --number-nonblank arquivo.txt - nao numero linhas em branco
+# cat -n --number arquivo.txt - numerando linhas em branco tambem (todas as linhas)
+# nl arquivo.txt - nao numerando linhas em branco
+
+19. REGEX - expressoes regulares # egrep	# gre -E
+[] = range, {} = quantificador
+999-999-9999 = [0-9]{3}-[0-9]{3}-[0-9]{4}
+
+20. # lspci - lista os dispositivos pci
+# lsusb -s 002:002 -v
+-s [bus]:[devicenumber]- detalhes baseados em BUS e Device
+-v --verbose - exibir detalhes
+
+21. Comando irá criar de uma só vez todos os diretórios da árvore?
+# mkdir -p --parents /home/usuario/novo/arvore/de/diretorios
+
+22. comando irá retornar todos arquivos que comecem com a string “report” e terminem com “csv”,  no diretório /usr?
+# find /usr -name "report*csv" 
+Tem que usar aspas devido ao uso do *
+
+23. Comando irá enviar ao programa “gera-relatorio” o arquivo “dados” como entrada e registrar os logs de erro no arquivo “erros.log”?
+# gera-relatorio < dados 2> erros.log
+# dados > gera-relatorio 2> erros.log
+
+24 . # cat /etc/fstab
+users - partição pode ser montada e desmontada por qualquer usuário do sistema, mesmo que não tenha sido ele quem montou a partição inicialmente.
+user - qualquer usuário possa montar uma partição, mas apenas o usuário que a montou pode desmontá-la
+nouser - usuários comuns não possam montar a partição
+	meneiras de referencias a partição no /etc/fstab
+	pelo UUID, nome do device (/dev/sda1) ou pelo LABEL do device
+
+25. 
+SIGUP - código 1
+SIGTERM = codigo 15 = kill soft - sinal PADRÃO do kill
+SIGKILL = codigo 9 = mata abruptamente
+SIGINT = codigo 2 = crtl+ C
+SIGSTOP = codigo 20 =crtl + Z - # bg = coloca em background 
+SISSTOP = interrompe sem terminar
+	# nohup firefox &  - continua sendo executado mesmo que o BASH seja rechado
+
+
+26 - Range do nice [-20 ao + 19]
+-20 é o de maior prioridade possível
++19 é o de menor prioridade possível
+	# nice -19 firefox &  - em em background com menor prioridade
+	# nice -n 19 firefox &
+
+comando iniciado com nice valor padrão é 10 # nice firefox - padrão reduzida
+processo iniciado sem o nice = padrão é valor ZERO # firefox
+
+27. sintaxe de nice é diferente de renice
+nice -15 pid = 15
+nice --15 pid = -15
+nice -n 15 pid = 15
+nice -n -15 pid = -15
+renice -15 pid = -15
+renice -n -15 pid = -15
+renice 15 pid = 15
+renice -n 15 pid = 15
+Somente o root pode aumentar a prioridade, ou seja, deixar o nível de nice negativo
+inica um processo com nice - nice = 10, prioridade reduzida
+inicia um processo sem nice = 0 = nice padrão é zero de um processo
+
+28. comando pode ser utilizado para contar a quantidade de linhas em que a palavra “Linux” aparece no arquivo resultado.log
+grep -c --count = faz a contagem de uma string
+# grep -c Linux resultado.log
+# fgrep = nao aceita REGER	# egrep = REGEX exendidas
+
+29. Diretórios na partição /
+/etc, /sbin, /bin, /lib, /media, /mnt, /proc, /dev, /sys
+
+30. Comando utilizado para instalar o GRUB na área de MBR do disco /dev/sda?
+	# grub-install /dev/sda
+	# grub-mkconfig # update-grub -  utilizadospara obter info definidas nos arquivos de 
+configuração # cat /etc/default/grub e /etc/grud.d/*  e criar o arquivo # cat /boot/grub/grub/cfg
+	# mkconfig -o --output=ARQUIVO
+	Exemplos
+	# grub-mkconfig > /boot/grub/grub.cfg
+	# grub-mkconfig -o /boot/grub/grub.cfg
+	# update-grub > /boot/grub/grub.cfg
+	 
+
+
+
+GRUB2
+# vim /etc/default/grub - arquivo para ajustar o tempo de exibição do menu
+# cat etc/dafault/grub.ucf-dist
+# update-grub - efetivar as alterações feitas no arquivo acima
+
+31. Maneiras de reiniciar
+# shutdown -r now	# telinit6	# reboot	# systemctl reboot
+# systemctl shutdown == telinit0
+
+32.	Mandeiras de criar particao
+	# fdisk		# gdisk		# parted ( #	resizepart = aumenta/dimunir partição)
+	Criar sistemas de arquivos
+	# mkfs	# mke2fs	# mkfs.ext3
+
+33. Comando exibe a lista de todas as tarefas executadas em background no shell atual?
+# jobs
+
+34.  Comando pode ser utilizado para verificar o uso de inodes da partição /dev/sdb1
+# df -i --inodes /dev/sdb1
+# df -haT --human-readeble --all --print-type
+
+35. Escrever a frase “Agora são XX horas e YY minutos” = executar um comando dentro de outro
+
+# echo "Agora sao `date +%H` horas e `date +%M` minutos"
+# echo "Agora sao $(date +%H) horas e $(date +%M) minutos"
+Uso de aspas simples no começo e fim da frase, fará com que os sub-comandos não sejam executados.
+
+36. montar manualmente o dispositivo /dev/sdb1 no diretório /mnt/backup/ ?
+# mount /dev/sdb1 /mnt/backup
+
+37. Hypervisor é uma camada necessária, essencial entre a Infraestrutura do Host (que provê o serviço ou hospedeira)
+ e a Máquina Virtual propriamente dita, ou Guest
+
+38. Sistemas de arquivos Btrfs
+Btrfs suporta nativamente recursos como subvolumes, snapshots, multi-devices/RAID e compressão transparente de dados.
+
+39. Comando irá retornar o nome completo apenas dos alunos cujo primeiro nome seja Carlos.
+# grep "^Calors" alunox.txt
+O caractere ^ indica sempre algo no início da linha. 
+O caractere $ indica o final de uma linha. 
+O grep -v --invert-match excluiria toda ocorrência da palavra Carlos
+
+40. comando pode ser utilizado para verificar os pontos de montagem ativos pelo systemd?
+# systemctl list-units --type=mount
+
+41. Comandos irá enviar a saída do programa application para o arquivo log.out e para a saída padrão (tela)?
+# application | tee log.out
+
+42. 
+# which - procura por arquivos apenas nos diretórios incluídos na variável de ambiente PATH
+# whereis - localiza os arquivos binarios, bibliotecas, códigos-fonte e manuais
+# cd /usr/share/man  - diretório onde ficam os manuais
+# locate - Utiliza uma base de dados interna que contém a localização de todos os arquivos do sistema
+	# update db - atualiza essa base de dados
+# apropos -  Busca baseado na descricao
+
+
+PROVA 01 - CURSO SIMULADOS LPI1
+
+1. Ver as mensagens durane o boot da máquina?
+ # dmesg | less	#journalctl -b
+
+2. sair e salvar no vim
+:wq	:x	ZZ
+Fazer busca no vim
+	/texto  - de cima para baixo
+	?texto  - de baixo para cima
+	:[numero da linha]  - vai até a linha espefificada
+
+	u  - desfazer - undo
+	^r - refazer -redo
+	v com as setinhas para marcar o texto
+	y - copia
+	p - paste
+	%s/antes/depois
+	:split - divide a janela horizontal
+	:vssplit - divde a janela vertical
+
+3. parâmentro que indica o kernel a ser carregado
+	GRUB LEGACY - KERNEL indicado pelo parametro KERNEL
+	default - sistema padrão no LEGACY
+	root - partição a ser utilizada
+		# cat /boot/menu.lst
+		
+	GRUB 2 - KERNEL indicado pelo parametro LINUX
+		GRUB_DEFAULT=x - sistema a ser iniciado por padrão
+		GRUB_TIMEOUT=30  - tempo de espera antes de iniciar o boot do kernel
+		# cat /boot/grub/grub.cfg
+
+4. systemV = runlevel, 0 Level Desligamento, 6 Level Reiniciar. PID=1 = init . Todos processos são filhos do init em /sbin/init
+   systemd = units, target = systemctl
+
+5. MBR - região que usa os primeiros 512 bytes. 4 partições primárias, ou 3 primárias e 1 estendida ( n lógicas)
+		sda1 - sda4 primárias		sda5 - sda...   partições lógicas numeradas a partir de 5
+
+   POST (Power-On Self-Test) -Procedimentos da BIOS que realizar teste em dispositivos de hardware conectados à placa-mâe
+   GRUB - Gerenciador de boot	
+
+6. Arquivo que ficam as bibliotecas dinâmicas compartilhadas
+	# cat /etc/ld.so.conf - arquivos de configuração
+	# cat /etc/ld.so.cache - arquivo responsável por manter o índice das bibliotecas do sistema
+	# cd /etc/ld.so.cond.d - diretorios de arquivos de configuração
+	# ldconfig - recomplia o /etc/ld.so.cache
+	-> Para adicionar um biblioteca para todos os usários
+		-> Incluir o dietório no arquivo /etc/ld.so.conf e executar o # ldconfig
+
+7. Comando que faz apenas o download do pacote?
+	# apt-get install pacote --download-only
+	# cd /var/cache/apt/archives
+
+8. Comando para gerar um lista de todos os pacotes instalados
+	# rpm -qa --query --all
+
+9. Diretório que ficam a lista de repositórios do yum
+	# cd /etc/yum.repos.d/
+
+10. zypper (OpenSUSE) 	| dnf (Fedora)
+
+
+11. Programas na variável de ambiente PATH faz com que não seja
+precis digitar o caminho toda vez que executar o programa
+
+12. Arquivos que contém info referentes aos endereços de E/S
+	# cat /proc/ioports
+    Arquivos dos IRQs (Interrupt request Line)
+	# cat /proc/interrupts
+
+13. Exibe as últimas 20 linhas do arquivo e continua mostrando se novos
+registros forem inseridos
+	# tail -n20 -f --follow /var/log/messages
+
+14. insmod = tem que informar caminho, modprobe não precisa informar
+	# insmod /lib/modules/teste/abcd22.ko
+	# modprobe abcd22
+	# lsmod - lista os módulos carregados no kernel
+
+15. Mover todos arquivos de maneira forçada para o direrório atual
+	# mv -f --force /diretorio/* .   - move tudo sem perguntar antes de sobrescrever
+
+16. saída do comando na tela e enviada para um arquivo
+	# dmesg | tee logo_do_boot.txt
+
+17. stdout e stderr para o mesmo arquivo
+	# comando > log.txt 2>&1
+	# comando &> log.txt
+
+18. COmo ver a quanto tempo o sistema está ligado?
+	# uptime
+
+19. Exemplos de fazer backup dos arquivos de .conf do /etc
+	# ls /etc/*.conf | xargs czf backup.tar.gz
+	# ls /etc/*.conf | xargs cjf backup.tar.tbz2
+	# ls /etc/*.conf | xargs cJf backup.tar.xz
+	# tar czvpf backup.tgz /etc/*.conf
+	# tar cjvpf backup.tbz2 /etc/*.conf
+	# tar cJvpf backup.txz /etc/*.conf
+
+20. comando pode ser utilizado para localizar no diretório /usr, 
+todos os arquivos pertencentes ao usuário "sistema2
+	# find /usr -user sistema2
+	# find /usr -iname "novo*"  - tem que ter aspas pra expressão regular, -iname = não sensitivecase
+
+21. # gre -c --count "^$" arquivo
+Conta o número de linhas vazias, encontrando linhas que não tenham nada entre o início e o fim
+
+22. remover no vi
+# d20d	#20dd - remove 20 linhas
+# d21d	#21dd - remove linhas atual a as próxima 20.
+# :$ - posicionar o cursor na última linha
+# :1 - crusor na primeira linha
+# :100 - cursor na centésima linha
+
+23. diferença + e ?
++ - ocorre pelo menos 1 vez
+? - pode não ocorrer nenhuma ou apenas 1 vez
+
+24. Descrição de > e >>
+ > - escreve a saída padrão em um novo arquivo
+>> anexa a saída padrão em um arquivo existe, faz um append (acrescentar)
+
+25. df -i --inodes /dev/sdb2   - visualizar os inodes na partição
+
+26. Mapeamento de um DVD
+	# mount /dev/sr0 /mnt/dvd
+
+27. Partições do /etc/fstab serão desmontados se não estiverem em uso
+	# umount -a --all - desmontando tudo do /etc/fstab
+	# umount -n --no-mtab  - não escreve no /etc/mtab
+	# cat /etc/mtab - Arquivo de controle em o sistema mantpem todo as montagens atuais.
+Ele não deve ser editado pelo administrador.
+	# mount -a - Tudo do /etc/fstab será montado, exceto as que possuem opção "noauto"
+	
+
+28. Propriedades obigatóriamente diferentes em máquinas virtuais clonadas
+1 - D-BUS MAchine ID
+2 - SSH Host Keys
+
+29. Comandos para definir o grupo system de maneira recursiva
+# chown -R --recursive :system /opt/system/abc
+# chown -R --recursive .system /opt/system/abc
+# chgrp -R --recursive system /opt/system/abc
+
+30. link simbólico # ln -s caminho_do_diretorio	nome_do_link
+	# ln -s --symbolic *usr/share/man manuais
+	# ln -P --physical arquivo nome_do_link
+	# ln arquivo nome_do_link
+-> Senão informar opção é hard_link
+-> Somente link simbólico para diretórios
+-> hard_link apenas para arquivos  
+-> O tamanho de um link simbólico será exatamente igual à quantidade de caracteres que formam o destino referenciado
+-> hard_link terá o mesmo tamanho que o arquivo para o qual ele aponta
+-> Link_simbólico pode ser em partição diferente
+-> linK_hard compartilham o mesmo inode
+-> Apenas o link simbólico utiliza o simbolo -> para indicar o seu destino
+
+
+PROVA02 - SIMULADOS LPI1
+
+01. 
+	# echo Curso Linux Online | tr -d 'aeiou' = Crs Lnx Onln  - é tudo case sensitive
+		
+
+02. Exibe todas as dependencias de um pacote
+	# apt-cache depends pacote
+	# apt depends pacote
+	# dpkg -s --status vim
+   Identificar o pacote "dono desse arquivo (pacote que instalou o arquivo)
+	# dpkg -S --search /etc/pam.conf	
+
+03. Padrão de identificação de dispositivos de armazenamento
+	SATA		/dev/sdX - convertem SCSI
+	ATA/IDE		/dev/hdX
+		hd0,0 = /dev/hda1	hd1,3 = /dev/hdb4
+		no GRUB  Legacy usa o /boot/grub/menu.lst 	
+
+
+04. Verificar um pacote respondesável por uma instalação no Red Hat
+
+	# rpm -qf --query --file /etc/vim
+	# rpm -V --verify pacote.rpm - verifica a integridade de um pacote
+
+05. Opção de isolate = alternar entre modos de execução
+opção de recuperação (modo single)
+	# systemctl isolate rescure.target  =	# systemctl isolate runleve1.target
+
+06. # umask 022 = umask 0022 -> se considerar o bit de permissão especiais sst
+	arquivos = 666 - umask
+	diretórios = 777 - umask
+	666-022 = 644 para arquivos = rw-r--r--
+	777-022 = 755 para diretórios = rwxr-xr-x
+
+07. opções dos parâmetros do boot
+	quiet - omite mensagem, modo silencioso
+	me - quantidade máxima de ram
+	ro -reado only
+	splash - tela de ínicio
+
+08 .	# history - exibe o histórico
+	# cat /home/usuario/.bash_history  
+	# echo $HISTFILE - contem o nome do arquivo utilizada para armazenar os ultimos comandos
+	# echo #USER - 	nome do usuário do shel
+	# echo #HISTFILESIZE - tamanho máximo do arquivo de histórico		
+
+09. Exibir texto na tela
+
+# cat <<< texto
+# echo texto
+# echo texto 2> arquivo - apenas o erro é enviado ao arquivo
+# echo texto | cat 
+
+10. REGEX
+[ ]  - lista de valores possíveis
+() definem grupos que podem ser separados por | = ou
+? - caracter é opcional
+^- indica que deve estar no começo da linha
+$ - indica que a expressão deve estar no final da linha
+
+# egrep "^(0?[0-9]|1[0-9]|2[0-3])":[0-5][0-9]- localiza todos
+# grep -E ^[012]?[0-9]:[0-5][0-9] - não pega os 1:30, 2:45
+# egrep	[012]?[0-9]:[0-5][0-9]$ -pega só os que finaliza com horas e sem os 01:30 e 2:45
+
+expressão localiza registros como 02:30, 14:22, 9:49, 01:30, 01:30
+
+11. compactar todos os arquivos de um determinado diretorio que terminem com 2020.log
+	# find /var -iname "*2020.log" | xargs gzip
+	# find /var -iname "*2020.log" | xargs bzip2
+	# find /var -iname "*2020.log" | xargs xz
+-> o xargs vai trabalhar apenas com 1 arquivo por vez, o tar iria agrupar eles em um único arquivo
+	# find /var -iname "*2020.log" | xargs tar czf backup.tgz - senão usar o xargs não tem entrada para o tar
+
+12. Exibir na tela e salvar em um arquivo. Por padrão o tee sobrescreve o arquivo
+opção -a --append
+	# comando | tee -a --append arquivo.txt
+
+13. maneiras de Executar um Script
+	# ./Script.sh
+	# . Script.sh
+	# source Script.sh
+	# bash Script.sh 
+Se já estive no PATH é só digitar Scritp.sh, como se fosse um comando do Linux
+
+14. # ps axu
+a = mostra processo de outros usuarios
+u = habilita o formato usuario
+x = mostra processo de todos os terminais e processos sem terminais
+
+15. Programas para alterar as prioridades dos processos
+# renice
+# top
+
+16. Programas de edição de texto = vi, vim. emacs, nano
+
+17. Mostrar todo as partições do sistema
+	# fdisk --list
+	# parted --list
+	# cat /proc/partitions
+
+18. tune2fs -j /dev/sdb2 -add an ext3 journal to the filesystem em /dev/sdb2
+
+19. Para repar um partição ele quem que estar desmontada
+	# umount /dev/sdb1
+	# fsck -t ext3 /dev/sdb1
+
+20. Diretórios de reposição do Red Had
+	# cd /etc/yum.repos.d/
+
+21. Elementos utilziados em definições de um dimensionamento LVM
+	VG (VOlume Group), PV (Physical Volume), LV (Logical Volume),
+	PE (Physical Extent) e LE (logical Extent)
+
+22. Comandos para verificar o load average de uma máquina
+	# top
+	# uptime 
+
+23. Guest Driver nas máquinas virtuais são instalados nos SO Hosts das máquinas
+virtuais apra melhorar sua performance e usabilidade.
+Ex Guest Additions, Vmware Tools	
+	
+PROVA 03 - CURSO SIMULADOS LPI1
+
+01. Melhor sequência de um processo de boot
+	UEFI > Bootloader (GURB) > Kernel > init
+		UEFI acessa diretamente BootLoadedr da partição ESP (EFI System Partition), não utiliza BIOS e nem 
+		área de MBR # cd /boot/efi, sempre do tipo FAT
+	BIOS (firmware da placa-mãe) > MBR > Bootloarer (GRUB) > Kernel > init
+
+02. O que faz o Bootloader
+	-> Seleciona e executa o Kernel e o initrd
+
+03. 
+	# shutdown - desliga
+	# shutdown -r --reboot 21:00 - reinicia as 21:00
+	# shutdown -P --poweroff  - desliga a máquina
+	# shutdown -H --hatl  - desliga apenas o sistema operacional
+	# reboot - não permite agendar horário
+
+04. daemon responsável pela power do hardware
+	# acpid --help  - Advanced Configuration and Power Interface 
+
+05. Exercios[1-9].{txt,doc,xls}
+	[] - lista de caracteres, apenas 1 deles
+	{} - lista de caracteres possíveis
+
+06. Maneiras de remover por completo um pacote, aplicação e arquivos de configuração
+	# apt-get purge gedit
+	# dpkg -P --purge gedit
+	
+
+07. Apenas removendo o pacote
+	# apt-get remove
+	# dpkg -r --remove
+	# yum remove or erase
+	# rpm -e --erase
+
+08.	# dnf upgrade - atualiza e remove pacotes obsoletos
+	# dnf update - apenas atualiza
+
+	# apt-get update - apenas atualiza as info dos repositórios	
+	# apt-get upgrade - atualiza todos os pacotes do sistema
+	# apt-get dist-upgrade - além de atualizar, remove pacotes obsoletos	  
+
+09.	# $$ - pid do shell atual
+	# $! - pid do último process em background
+	# $? - código de retorno do último comando executado
+	!! - último comando seja executado novamente
+	!15 - comando da linha do history executado novamente
+
+10. echo com as simples fazerm as variaveis não seja interpretadas
+	# NOME="RAFAEL DE LUCA" - tem que ter aspas para definir um variável com mais de uma string
+	# echo "O aluno $NOME foi aprovado" 
+	# echo O aluno $NoME foi aprovado
+	# echo 'O aluno $NOME foi aprovado'  - não vai interpretar a variável
+
+11. Exemplo de uso do sed. Remove toda linha que começe com "www."
+	# sed -i --in-place'/^www\./d' arquivo.txt
+-i = edita o arquivo original
+/d = indica que toda linha que possui a string será removida
+
+20. Retornar apenas o nome e Id dos ultimos 5 linhas
+	# tail -5 -n5 /etc/passwd | cut -d: -f1,3
+	# tail -5 -n5 /etc/passwd | cut --delimiter=: --fields=1,3
+-d define o delimiter e f os campos
+
+21.	# file arquivo.txt - determina o tipo de arquivo baseado no texto
+	# type vim - identifica se é comando interno ou externo do shell, ou um alias
+
+22. Maneiras de executar um comando
+	| - usa a saida do primeiro comando como entrada do segundo
+	; - executa os comandos em sequencia
+	& - coloca para execução do comando em background	
+	
+23.	# fsck.ext2 -cfy  /dev/sdb4
+	# fsck = check and repair a linux filesystem
+-f = força a checagem, -c = checa por badblock, -y = yes, -n = nenhuma mudança feita automaticamente
+
+24.	# pstree -p --show-pids = exibe todos os processos em forma de árvore
+	# ps --forest  = exibe todos os processos em forma de árvore
+
+25.	# nice -8 programa = definido o nivel de NICE igual a 8
+	# nice --8
+	# renice 8 programa = definido o nível de NICE igaul a 8
+	# renice -8
+	nice [-20 - +19 ] - o que tive MENOR nice, vai ter a maior PRIORIDADE
+	 
+
+26 .	sed | grep | grep -E | egrep  - interpretam expressões regulares
+	fgrep - não interpretam apenas faz filtros por strings de texto
+	# sed 's/Linux/LINUX/g' arquivo.txt
+	-> substituir todos os Linux por LINUX, g = global, sem ele apenas a primeira ocorrência de cada linha
+seria substituida
+
+27.	# find /etc -ctime +7 - chance time MAIS que 7 dias
+	# find /etc -mtime -7 - modification time nos últimos 7 DIAS
+	# find /etc -atime 7 - access time exatamente a 7 duas atrás
+ctime - conteúdo ou permissões
+mtime - conteúdo
+atime - última vez que foi acessado
+
+29.	# rpm -ql vim-minimal 
+	-q --query
+	-l --list = informa todos os arquivos instalados pelo pacote
+
+30.	# blkid  - print block device atributes, obter o UUID de todas as partições
+	# lsblk -f --fs  = firesystem
+	# tune2fs -l /dev//sda1  - varios infos, inclusive UUID
+	# lsblk -a --all = info sobre todos os dispositivos
+
+31. -> Todos os containers compartilham o Kernel da infraestrutura do host
+-> Há um reserva de memória RAM da máquina Host para as máquinas visrtuais
+
+32. Habilitando as permissões especiaos
+	# chmod u+s diretorio = SUID
+	# chmod g+s diretorio = SGID
+	# chmod o+t diretorio = stick no other, tipico do /tmp
+
+33.	echo $LD_LIBRARY_PATH
+-> vai pesquisar temporariamente um biblioteca no sistema, que não seja apenas em # cd /lib e # cd /usr/lib	
+
+
+34. watch é para reexecutar constantemente, TEMPO PADRÃO é 2 SEGUNDOS
+	# watch -n5 free -m --mega  = exibe o uso da memória a cada 5 segundos	
+	# free - display amount of free and user memory in the system
+
+35.	# cd /sbin	# cd /usr/sbin   - apenas o ROOT utiliza esses progrmas de administração
+	# fsck	# mkfs	# repquota
+
+36. Principal função do udev
+	-> gerenciar o diretório /dev  - dispositivos especiais	sda, sdb, sr0
+
+37. Como inicar um processo
+	no SystemV	# /etc/init.d/httpd start
+	no systemd	# systemctl start httpd		# systemctl kill httpd.service
+
+38. IRQ associada ao teclado = 1
+
+39. Listar sobre arquivos scsi
+	# cat /proc/scsi/scsi
+
+40. visualizar os logs de boot do sistema armazenados no systemd-journal
+	# journalctl -b --boot  - mostra as mensagem de um boot específico
+	# journalctl -all - Fazer consultas sobre o systemd	systemd-journald.service
+
+41.	# dpkg -l --list  - informa uma lista de todos os pacotes instalados
+
+42.	# dpkg-reconfigure tzdata
+
+43.	# rpm -U --upgrade -i --install -h --hash  = O -- upgrade serve para instalar e atualizar
+
+44.	Não é possível fazer download pelo # rpm, apenas pelo # yumdownloare	# yum --downloadonly
+
+45.	# yum search  - para pesquisar por pacotes disponíveis
+
+46.	# df -h --human-readable /dev/sda1- informações sobre o sistema de arquivos que se localzia cada arquivo
+	du -hsi --human-readable --summarize --inodes /dev/sdb1  - estimate disk usagedf
+
+47.	Exemplo de entrada no # cat /etc/fstab
+	<file system>	<mount point>	<type>	<options>	<dump>	<pass>
+	/dev/sdb2	/var		ext4	defaults	0	0
+	/dev/sda5	/media/cdrom	ext3	auto,users	0	0
+
+48.	Montar sia systemd
+	[Mount]
+		What=/dev/sdb2
+		where=/mnt/cdrom
+	
+	
+	
+
+
+
+
+
+
+
+ 
+
+
+	
+	
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+	
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

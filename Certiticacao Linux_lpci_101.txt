@@ -1,0 +1,1283 @@
+﻿101. Arquitetura do sistema
+
+# apt-get install gcc make perl - necessario para funciona o VirtualBox Guest Additions
+# vim /etc/apt/sources.list
+# apt-get update upgrade
+# lsb_release -a = ver a versao do SO
+# apt-get install module-assistant build-essential
+# m-a prepare - faz a compilacao de modulos
+# mount /media/cdrom/
+# cd /media/cdrom
+# sh VBoxLinuxAdditions.run
+
+--virtualbox Guest Additions no centOS
+# yum update	# reboot
+# yum groupinstall "Development Tools"
+# rpm -qa --query-release kernel\* | sort - Ver a versão do Kernel antes de atualizar
+# uname -r
+
+# yum install kernel-headers kernel-devel
+# yum update kernel
+# sh VBoxLinuxAdditions.run
+# yum install gcc make perl
+
+# cat /proc/interrupts - arquivos dos IRQs
+# cat /proc/ioports - enderecos de I/O
+# lspci - lista componentes pci
+# lsusb
+# cat /proc/cpuinfo
+# cat /proc/meminfo
+# ps - report a snapshot of the current processes 
+-> udev = ve os dispositivos conectados, cria mapeamento, monitoramento de dispositivos
+# man udev - udev = Dynamic device management
+# udevadmin monitor - fica monitorando dispositivos conectados, disconectados
+# ps axu | grep udev - Device Manager
+# ps axu | grep dbus - Comunicao entre processos
+# cat /proc/cmdline
+# vim /proc/cmdline - remover a opção quiet
+# cat /proc/filesystems - parametros que bootloader passou para o kernel
+# cat /proc/mounts - particoes montadas
+# df -T --print-type /proc - info sobre o sistemas de arquivo
+-> /proc - Não estão em disco esses arquivos, apenas em memória
+# cd /lib/udev/rules.d - regras do sistema
+# cd /etc/udev/rules.d - admin pode criar as própria regras
+# df -T /dev
+# df -T --type=tmpfs - tmpfs=filesystem que grava em memória (dinâmico)
+
+--IDE, PATA, SATA SCSI
+(P)ATA - PArallel Advanced Technology Attachment = IDE
+Possui Master/Slave. Mapeados como
+	/dev/hda ou /dev/sda -master
+	/dev/hdb ou /dev/sdb - slave
+	/dev/hdx ou /dev/hdx - cd/dvd
+SATA - Serial Adavanced Technology Attachment - mais rápido
+	/dev/sda
+	/dev/sdb
+SCI -Small COmputes System Interface
+	Tipos: 8 Bits (7 dispositivos + 1 controlador e 16 Bits (15 dispositivos + 1 controlador) 
+	SCSI_ID (Canal = idenfiticador canal), (ID=Idenfiticador de cada dispositivo)
+	mapeamento:	/dev/sda	/dev/sdb	/dev/sdc
+# cat /proc/scsi/scci
+Outros dispositivos
+	/dev/fd0 - floppy disck
+	/dev/scd0 - SCSI Cd-rom
+	/dev/sr0 - SCSI DVD
+		
+
+# cd /lib/modules/ - modulos no linux analogo a drivers no windows = extensao .ko
+# uname -r --kernel-release - versao de lançamento do Kernel
+# uname -a --all - Kernel, nodename, kernel-release, machine, processador, SO
+# cat /etc/modules - definir quais modulos queremos subir que não automaticos no linux
+# cat /proc/modules - modulos automaticos do linux
+# lsmod - lista os modulos carregados no Kernel do Linux
+# modinfo [fjes] - detalhes de um modulo listado pelo lsmod
+# lsmod | grep mouse - mostra se o módulo mouse está carregado ou não
+# modinfo psmouse 
+# rmmod psmouse - remove o modulo
+# insmod [/lib/modules/.../input/mouse/psmouse.ko] - nao carrega as dependencias
+-> dependencias - alguns módulos dependem de outros módulos pra funcionar
+# modprobe bluecard_cs - carrega as dependencias
+# modprobre -r --remove bluecard_cs - desintalar modulos
+# cd /lib/modprobe.d - possivel inserir um modulo na blacklist (evitar conflito)
+# vim fbdev-blacklist.conf
+# man modprob.d
+# cd /etc/modeprobe.d/*.conf 
+# cd /run/modprobe.d/*.conf
+
+O PROCESSO DE BOOT - BIOS
+
+1 -> BIOS (Basic Input/Output System) 
+	Localiza e executa a MBR
+
+2 -> MBR
+ (Master Boot Record)
+	Executa o Bootloader
+
+3 -> Bootloader (GRUB/LILO)
+	Seleciona quel Kernel  e executa o Kernel e o initird	
+	GRUB (Aquele menu que seleciona Ubuntu, CentOS, Windows...)	
+
+4 -> Kernel
+	Executa o /sbin/init
+
+5 -> Init
+	Inicia os Serviços, Módulos, programas
+	Inicia os programas do runlevel/target definido
+----------------------------------------------------------------
+
+MBR - Localizado no primeiro setor do disco bootável
+
+/dev/hda ou /dev/sda
+Informacoes sobre o GRUB/LILO
+MBR carrega e executa o GRUB/LILO (LInux LOader)
+512 bytes
+	Boot Loader - 446 bytes (Info do GRUB/LILO)
+ 	Partition Table - 64 bytes
+	Validation Check - 2 bytes
+----------------------------------------------------------------
+
+BOOTLOADER
+gerenciamento de Boot - carregar o SO na memória
+Mais Usados: GRUB (Grand updatUnified BootLoader) e LILO
+Initrd/initramfs: Também é carregado pelo bootloader para dar suporte ao Kernel.
+Filesystem root (/) temporário carregado em memória RAM dar suporte ao Kernel
+----------------------------------------------------------------
+
+INIT - INITIALIZATION PROCESS
+
+Tem a função de iniciar os primeiros processos e serviços no Linux
+É o processo de ID 1. 
+Possui RunLevels (systemV) ou Units, Targets (systemd) que definem 
+diferentes modos de operação e o 
+grupo de serviços que será iniciado.
+
+Principais : SystemV, systemd, Upstart
+
+# dmesg | less - info sobre o boot - print the Kernel ring buffer
+# cat /var/log/messages
+# cat /var/log/dmesg
+# cat /var/log/syslog 
+
+UEFI (Unified Extensible Firmware Interface)
+-> Firmware que substitui a BIOS, maior moderno que a BIOS
+-> UEFI não usa a áres de MBR
+-> Lê a partição ESP (EFI System Partition) e carrega o Bootloader específico
+	Montada no diretório /boot/efi/
+	Utiliza u filesystem do tipo FAT
+-> Utiliza preferencialmente partições GPT (maior que 2 TB) e não MBR (apenas até 2 TB)
+-> Implementa Boot Seguro
+-> UEFI - Bootloader(GRUB) - Kernel -Init
+# efibootmgr - manipulate the EFI Boot Manager
+
+# dmesg | less - lê registro no boot /sda - filtra por sda	
+# cat /var/log/mensages
+# cat /var/log/syslog	 # tail -f /var/log/syslog
+# cat /vat/log/dmesg 
+# cat /boot/efi - ESP substitui a UEFI
+# journalctl - mostra LOGS de todos serviços
+# ps axu | grep systemd-jou
+# journalctl -b --boot - mostra o boot atual
+# journalctl -u --unit=timer.target - mostra log de uma unit espeficica
+# journalctl -k --dmesg - mostra a mensagem do Kernal do boot atual
+
+SystemV - runlevel 
+0=Desligamento | 1=Recuperacao | 6=Reinicializacao
+# service --status-all
+# cat /etc/inittab  - onde é definido o runlevel padrão após a inicialização
+	parâmetro que definit runlevel padrão - initdefault
+# cd /etc/init.d/rc* - scripts
+# cd /etc/rc.d/ - scripts
+# runlevel - mostra o runlevel atual
+# init 6 = # systemctl reboot
+# init 0 = # systemctl poweroff = poweroff = shutdown -h now
+# telinit 6 = alternar nivel de execucacao entre 0 e 6
+# telinit 5 = Habilita a interface gráfica
+	alt+F7 - alterna para o modo gráfico
+# startx - script que inicia uma interface grafica um pouco melhor ubuntu
+# cat /etc/systemd/journald.conf
+
+Sytemd - units | targets = grupo de units
+# apt-get upgrade systemd
+# ls -l /lib/systemd/system
+# cat /lib/systemd/system/cron.service
+# cd /etc/systemd/system
+# systemctl list-units --all --state=inactive
+# systemctl list-units --type=service
+# systemctl list-units-files
+# ape-get install ssh
+# systemctl list-dependencies cups.service
+# systemctl show sshd.service
+# systemctl enable multi-user.target
+# systemctl set-default multi-user.target
+# systemctl isolate multi-user.target - apenas interface linha de comando
+# systemctl set-default graphical
+# systemctl isolate rescue.target - alternar para modo single
+# systemctl halt | reboot | poweroff
+# systemctl start application.service | stop | restart | reload
+# systemctl enable application.service | disable | satus |
+# systemctl is-active application service | is-enable | is-failed
+# systemctl enable lightdm - habilitar o ambiente gráfico
+
+Upstart - substitui o init
+# initctl list
+# initctl show-config myservice
+# sudo apt-get install chkconfig
+# chkconfig --list
+# start service | status | stop
+# shutdown -1 desliga em 1 minuto
+# shutdown -r --reboot - reinicia
+# shutdown -h --halt - delisga somente o Linux
+# shutdown -P --poweroff
+# reboot -f --force - Force immediate
+# halt - desliga apenas o Linux
+# poweroff
+# wall "Mensagem teste" = manda msg para todos os usuarios
+# ps axu |grep acpid - advanced configurations and PowerInterface - Gerenciamento de Energia
+# apt get install acpi 
+# acpi --help  # acpi -V --everything
+
+------------------------------------------------------------------------------------------
+102. Instalação Linux e gerenciamento de Pacotes
+
+# df = reporte file system disck space usage
+# du = estimate file space usage
+# df -h --human-readable - print sizes in power of 1024
+# df -H --si - print sizes in power of 1000
+# df -a --all - mostra info sobre todos os sistemas de arquivo
+# df -T --print-type = mostra o tipo de sistema de arquivo
+# cat /proc/swaps
+# fdisk -l --list = Exibe toda as partições e sai
+# cat /boot/efi/EFI
+# efibootmgr -v --verbose - manipular o sistema de boot do EFI. Imprime info adicionais
+
+-- Sistemas de Particionamento
+	-> MBR (Master Boot Record) - menor que 2 TeraByte
+		4 Primárias ou 3 Primárias e 1 Extendida (várias lógicas)
+		Primárias (sda1 - sda4) | Extendida (sda5...)
+		0x83 - Linux Filesystem | 0x82 - Swap
+	-> GPT (Guid Partition Table ) - usado pelo EFI
+		partições maiores que 2 TB
+
+-- GRUB LEGACY
+# cat /boot/menu.lst
+# cat /boot/grub/grub.conf/cfg
+# grub-install /dev/sda
+# grub-install '(hd0')
+- kernel indica o kernel a ser carregado
+default - sistema padrão no LEGACY
+root - partição a ser utilizada
+
+-- GRUB2
+Linux - indica o kernel a ser carregado
+GRUB_DEFAULT=x - sistema a ser iniciado por padrão
+GRUB_TIMEOUT=30  - tempo de espera antes de iniciar o boot do kernel
+
+# cat /boot/grub/grub.cfg
+# cd /etc/default/grub - remover a opcao quiet (ver mais info no boot)
+# cd /etc/grub.d/
+# cd /boot/grub
+# grep timeout grub.cfg
+# update-grub
+# grub-mkconfig -o
+
+
+
+# dd - usado para copiar partições inteiras, ou apenas arquivos
+# dd if=/dev/sda of=/home/rafael/copia.mbr bs=1 count=512
+# dd if=/home/rafael/copia.mbr of=/dev/sda1  - restaura o backup
+
+-- BIBLIOTECA COMPARTILHADAS
+
+# ldd - print shared object dependencies
+# ldd /usr/bin/vi - todas bibliotecas que o vi utiliza
+# cd /lib	# ls -l /usr/lib | less
+# ls -ld /etc/ld.so*
+# cat /etc/ld.so.cache - recompilado com o comando ldconfig
+# cat /etc/ld.so.conf
+# vim /etc/ld.so.conf.d	/libc.conf = /usr/local/lib
+# ldconfig - configure dynamica linker run-time bindings, recompila o ld.so.chace
+# ldconfig -p --print-cache - lista as biblitecas ativas
+# export LD_LIBRARY_PATH=/tmp/lib/ - esse diretorio deve ser adicionado
+ao /etc/ld.so.conf para procurar pelas lib ativas
+# env | grep LIBRARY
+# ldconfig -p | grep "/tmp/lib/"
+
+-- DEBIAN	 (.db, dpkg, apt-get) / RED HAT (.rpm, rpm, yum)
+
+# rpm -ivh bash --install --verbose --hash
+# cd /var/cache/yum	# cd /var/cache/dnf/AppStream/packages
+# cd /etc/cache/yum/AppStream/packages
+# cd /etc/cache/yum/BaseOS/packages
+# find / -iname '*openssh*.rpm'
+# rpm -Uvh --Upgrade zsh_versao.rpm - atualiza ou instala
+# rpm -F --freshen - atualiza se já estiver instalado
+# rpm -e --erase ksh - remove
+# rpm -qR --requires bash - verifica as dependências necessárias
+# rpm -qa --query --all, consulta todos pacotes instalados
+# rpm -qi sqlite- consulta pacote especifico
+# rpm -ql /etc/skel/.bash - Lista arquivos de um pacote
+# rpm -qc - query, configuration files
+# rpm -qpl --query --package --list - Analisa um pacote não instalado
+# rpm -V --verify openssh - verifica a integridade 
+# rpm --install --force openssh.rpm - permite a substituição de arquivos existentes
+# rpm --install --nodeps gcc.rpm - nao verifica dependencias
+# rpm --install --test openssh.rpm - nao instala efetivamente
+# yum update -y && yum install -y openssh openssh-server
+
+-- Interface gráfica no CentOS 7
+# yum update
+# yum groups list - listar os grupos de pacotes
+# yum group install "GNOME Desktop"
+# systemctl get-default = multi-user.target = sem interface gráfica
+# systemctl set-default graphical
+# startx - Script para rodar a interface gráfica
+
+-- Interface gráfica no CentOS 8
+# yum group list	
+# yum groupinstall "Server with GUI"
+# systemctl set-default graphical
+
+# apt install yum ls# apt install yum-utils
+# yum install yum-utils - baixar o Yumdownloader
+# yumdownloader nome_do_pacote
+# yumdownloader --resolve samba - baixar pacote com todas as dependências
+# yum install gcc perl make
+# yum install yum-downloadonly - instalar o apenas baixar
+# yum install yum-plugin-downloadonly - instalar plugin Downloadonly
+# yum install --downloadonly nome-do-pacote [gimp]
+# yum install --downloadonly --downloaddir=/root/meuspacotes/ gimp
+# cd /var/cache/yum
+# yum remove | erase ksh
+# yum list - lista pacotes disponiveis # yum list | grep samba
+# yum update httpd vsftpd - Atualiza
+# yum check-update - verifica atualizacoes disponiveis
+# yum upgrade - atualiza, removendo inclusive obsoletos
+# yum search samba - procura pacote baseado em uma string
+# yum repolist all - ver os repositorios disponiveis
+# yum-config-manager --enable extras-sources - Habilitar repositorio extras-sources
+# cat /etc/yum.conf
+# cd /etc/yum.repos.d/
+# rpm2cpio arquivo.rpm > tcsh.cpio
+# cpio -i (--extract) -d (--make directories) < tcsh.cpio - extrar arquivos e criar diretórios
+
+# dnf - FEDORA
+# dnf install | info | remove | check | clean | update | upgrade
+
+# zypper - OPENSUSE
+# zypper repos - listar repositórios
+# zypper search calculator
+# zypper info zsh
+# zypper install zsh
+# zypper refresh - lista o que falta atualizar
+# zypper addrepo | removerepo | clean | services | addservice | removeservice
+# zypper install | remove | verify | search | product-info
+# cat /etc/zypp/repos.d/repo-update.repo
+
+# apt-get -d --download-only install minicom
+# cd /var/cache/apt/archives/
+# dpkg -i --install [minicom...pacote.deb]
+# dpkg -r --remove minicom
+# dpkg -P --purge - remove completamente
+# dpkg -l --list package-name
+# dpkg -I --info package-name.deb
+# dpkg -s --status
+# dpkg -L [pacote] --listar pacotes resumidamente
+# dpkg -S --search filename # dpkg -S /etc/sudoers
+# apt-get -d --download-only install ksh
+# cd /var/cache/apt/archives/
+# dpkg -i --install [ksh...pacote.deb]
+# apt-get install binfmt-support - dependencia necessario ao ksh
+# dpkg -S /usr/share/menu/ksh
+# dpkg --get-selections - Lista todos os pacotes instalados
+# dpkg-reconfigure tzdata
+# dpdk-reconfigure keyboard-configuration
+
+# alien -r pacote.deb  - transforma pacote.rpm
+# alien pacote.rpm  - transforma em pacote.deb
+
+# apt-cache [opcoes] [pacote]
+# apt-cache show [minicom]- info de pacotes especifico
+# apt-cache pkgnames - mostra todos os pacotes instalados
+# apt-cache depends [ksh] - exibe info de dependencias
+# apt-cache search [string] - mostra pacotes de uma string chave
+
+# apt-get update - info atualizadas das fontes
+# apt-get upgrade - realiza a atualizacao de todos pacotes
+# sudo apt update && sudo apt upgrade -y
+# apt-get dist-upgrade - atualiza desde que haja quebra de dependencias
+# apt-get install | reinstal postfix
+# apt-get remove samba
+# apt-get upgrade samba - atualiza ou instala se não tiver instalado
+# apt-get purge squid - remove até arquivos de configurações
+# apt-get check | clean | autoclean | autoremove
+# apt-get --download-only install zsh - só baixa e não instala
+# cd /var/cache/apt/archives/
+# cat /etc/apt/sources.list
+# cat /etc/apt/sources.list.d
+# apt --fix-broken install
+# apt install dselect
+# dselect - interface de menu do apt-get
+
+-- VIRTUALIZAÇÃO
+
+# cat /proc/cpuinfo | grep hypervisor
+# virt-what
+# lshw -class status
+# hostameclt status
+# systemd-detect-virt
+
+# apt-get install docker
+# apt install docker.io
+# systemctl start docker
+# docker ps - lista containers
+# docker run -ti centos
+# docker run -ti suse
+# docker run -ti debian
+
+---------------------------------------------------------------------
+103. COMANDOS UNIX
+
+# echo - joga na tela o texto
+# TESTE= "Sistema Linux" - setar o valor para variavel de ambiente
+# echo $ TESTE
+# env - imprimir uma lista de variáveis de ambiente, somente GLOBAIS (enviadas, exportadas)
+# set - variaveis GLOBAIS + LOCAIS
+# set | grep TESTE
+# export TESTE- exporta uma variável local para global
+# unset VARIAVEL| env -u VARIAVEL- Apagar uma variável de ambiente
+
+# pwd - print working directory
+# set - determinar valor das opções do shell de sistema
+# man - manuais
+# uname - informações do sistema
+# uname --all -- kernel-name
+# history - histórico das linhas de comando
+# !! - ultimo comando do history
+# !3 - execulta comando de numero 3 do history
+# cat /root ou /home/user .bash_history - arquivo com o histórico de comandos
+# history -c - limpa o historico dos comandos
+# set | grep HISTFILE - output HISTFILE e HISTFILESIZE
+# alias - apelido
+# alias lista_rafael='ls -lrt /home/rafael'
+# lista_rafael
+
+
+-- PRINCIPAIS VARIAVEIS DE AMBIENTE
+
+# echo $nome_variavel 	# echo $PATH
+# echo $$ - mostra o PID do processo atual
+# echo $! mostra PID do ultimo processo em background
+# echo $? - mostra o codigo de saida do ultimo processo executado
+# echo ~  - contem o /home do usuario
+# echo ~rafael = Home do usuario rafael
+# VARIAVEL_NOVA=15
+# echo $VARIAVEL_NOVA
+# export VARIAVEL_NOVA
+
+HISTFILE = /home/user .bash_history - historico dos comandos feitos no terminal
+HISTFILESIZE=1000 - tamanho maximo do arquivo
+HITSIZE=2000 - tamanho maximo de linhas de comando 
+HOME = mostra o home do usuario atual
+LOGNAME - Mostra o nome do usuario que fez login
+PATH - Mostra o caminho de todos os programas do sistema
+PWD - Print Working Directory
+OLDPWD - Diretório anterior
+DISPLAY - Indica as aplicacoes graficas onde as janelas deverao ser exibidas
+TERM - mostra qual terminal estamos usando
+USER - mostra o usuario atual
+EDITOR - escolher o editor de texto padrao
+
+-- EXECUCAO DE COMANDOS
+# clear ; date ; ls  - executa os 3 comandos na sequencia
+# ls /tmp/ && echo LINUX - somente executa o 2 se o primeiro sucesso 
+# ls /tmp/diretorio_inexistente  || echo LINUX - somente executa o 2 se o primeiro erro
+
+-- MANUAIS
+# cd /usr/share/man -	Fontes do man
+# man comando_externo - comando interno nao tem manual
+# man bash - manuais de comandos internos
+# info ls - resumo do manual do ls
+# whatis fwupdate
+# fwupdmgr update - atualizar a UEFI
+# apropos "update system" - busca baseado na descricao
+
+-- QUOTING
+# echo "*"	# echo '*'
+# echo \hahahaha - protege apenas o primeiro caracter
+# " " - protege tudo, exceto $ ` \
+# ' ' - protege tudo
+# echo "$RAFAEL" - imprime valor da VARIAVEL RAFAEL
+# echo '$RAFAEL' - imprimi $RAFAEL
+`comando == $(comando)
+
+-- MANIPULAÇÃO DE ARQUIVOS
+
+# cat - gera conteúdo do arquivo na tela, contatenate files and print on the standard output
+# less - mostra arquivo grandes de maneira paginada
+# cat arquivolongo.txt | less
+# tac - comando tac lido de baxo para cima
+# cut - recorta seções espefíficas de um arquivo
+# cut -c1-5 alunos.txt - recorta os 5 primeiros caracteres
+# cut -c5- alunos.txt - recorta do 5 caracter em diante
+# cut -d" " -f1 alunos.txt
+# head - imprime por padrões as 10 primeiras linhas
+# head -n15 arquivo.txt
+# tail - imprime por padrão as últimas 10 linhas
+# tail -n10 -f --follow /var/log/arquivolog.txt - fica exibindo as 10 ultimas linhas do arquivo
+# wc alunos.txt- word count
+# wc -c --bytes -l --lines -w -words
+# nl - number lines of files - numeros linhas sem considerar linhas branco
+# od - despeja arquivos em octal e outros formatos
+# od -tx --format=x aluno.txt
+# sort - ordena linhas de textos
+# sort arquivo | uniq - ordena e imprime apenas entradas unicas
+# sort -r --reverse - organiza de z-a
+# uniq - informar ou omitir linhas únicas
+# uniq alunox.txt - imprime apenas linhas unicas
+# uniq -d --repeated alunox.txt - imprime apenas linhas duplicadas 
+# split - quebra arquivos em pedaços, 1000 linhas sem argumento
+# split -l20 --lines=20 arquivolongo.txt - cada arquivo novo com 20 linhas
+# split -l20 --lines=20 arquivolongo.txt novos_splitados - cada arquivo novo com 20 linhas e nome inicia com novos_splitados
+# ls -lt | egrep "novos*" - tem que ser entre aspas pra interpretar o *
+# join - Combina 2 arquivos atraves de um indice
+# join codigo-aluno.txt notas-alunos.txt - 4 colunas dos arquivos vira 3 colunas na tela 
+# paste codigo-aluno.txt notas-alunos.txt - 4 colunas, combina linha a linha
+# sed - procura um conteudo e substitui ou deleta
+# sed 's/Silva/Souza/g' - troca Silva por Souza, g = global = todas as ocorrencias
+# sed '3,5 d' alunos.txt - deleta da 3 até a 5 linha
+# cat alunos.txt | tr a-z A-z - translate minusculas em maiusculas
+# cat alunos.txt | tr -d A - deletas todos os A maisculos
+# cat alunos.txt | tr -d [:blank:] - deleta os espaços em branco
+# cat alunos.txt | tr [:upper:][:lower:] - transforma maisculas em minusculas
+# tr -d "\r" < ArquivoGeradoWindows.txt > NovoArquivo - Remove quebras de linhas do tipo \r
+# echo "Curso do Linuuuuux" | tr -s u - remove os u repetidos
+
+-- Ler arquivos sem descompactar
+# xzcat arquivolongo.txt.xz
+# bzcat arquivolongo.txt.bz2
+# zcat arquivolongo.txt.gz
+
+# checksums - verifica a integralidade de arquivos durante a transmissao
+# sha256sum arquivo.iso - gera o hash 256
+# sha512sum arquivo.iso - gera o hash 512
+# sha256sum -c sha256sums  - da um ok nas iso encontradas
+# cp - copy files and directories
+# cp --recursive --interative --verbose --		recursive - copia todas as subpastas
+# cp ~  - vai pro home do usuario
+# cp -opcoes [origem] [destino]
+# cd .. volta 1 diretorio
+# find - procurar por arquivos em um diretório
+# mkdir - make directories
+# mkdir -p --parents /linux/curso/lpi  - crias todas as estruturas dos subdiretorios
+# mv - move or rename files
+# mv Aula5 /tmp
+# mv Aula1 Aula_nova - renomeando arquivo Aula1
+# touch - create empty files, change file timestamps
+# touch arquivo.txt - criar um arquivo, muda o hora da ultima alteracao
+# touch -a -m
+# ls - list directory contents
+# ls -calRr --color[always] --all --formato lista longa --Recursive --reverse
+# rm - remove files or directories
+# rm -i --interactive Aula* - apaga os arquivos, mas confirma antes
+# rm -r -R --recursive diretorio/   - remove diretorio recursivamente (tudo que esta dentro dele)
+# rmdir - remove empty directories - tem que estar vazio para remover
+# tar - permite agrupar arquivos. cria, lista, extrar arquivos .tar
+# tar tf arquivo.tgz   ---list --file para listar todo o conteudo do arquivo sem descompactar
+# tar cpvf backup.tar /etc/*  -create -preserve -verbose -file  - tem que ter o c e o f para informar
+	o nome do arquivo. Depois de agrupar é possivel compactar com 3 tipos de algoritmos
+# gzip -k --keep backup.tar  - criar o backup.tar.gz  e mantém o original
+# gunzip --keep backup.tar.gz ou # gzip -dk --decompress --keep backup.tar.gz 
+# bzip2 -k backup.tar
+# bzip2 -d backup.tar.bz2  ou # bunzip2 backup.tar.bz2
+# xz -k backup.tar
+# xz -kd --keep --decompress backup.tar.xz
+# file - determine file type. Diz o tipo de arquivo
+# file backup*  - lista como cada arquivo foi compactado
+-> agrupando e já compactando - gzip -z	 
+				bzip2 -j
+				xz -J
+# tar czvpf copia.tar.gz *  --create, gzip, --verbose --preserve-permissions --file  * = todos os arquivos da pasta atual
+# tar cjvpf copia.tar.bzip2 novo*  --create, bzip2, --verbose --preserve-permissions --file  * = todos os arquivos da pasta atual que começam com novo
+# tar cJvpf copia.tar.xz /etc/*    --create, xz, --verbose --preserve-permissions --file  * = todos os arquivos da pasta /etc
+# tar kxf --keep-newer-files --extract --file copia.tar.gz   - extrai os arquivos e mantem o original mais novos
+# cpio - agrupador parecido com o tar, mas tem que gerar uma lista como entrada
+# cpio -oitv --create --extract --lista --verbose
+# find ./ -iname "novo*" | cpio --create > backup.cpio
+# find ./ -iname "novo*" | cpio --create | gzip > backup.cpio.gz
+# cpio -i < backup.cpio
+# gunzip -create backup.cpio.gz | cpio --extract  = descompactar 
+# dd - data definition. Função de converter e copiar arquivos
+# dd if=input_file of=output_file [options]
+# dd if=/dev/sr0	of=imagem.img
+
+-> stdin(0)	stout(1)	stderr(2)
+	> sobrescreve	>> faz um append no final do arquivo
+# ls -l /tmp/diretorio_inexistente 2> saida.erro.txt
+# ls -l /tmp 1> saida.sucesso.txt
+# cd /home/rafael/Exemplos
+# ls -l {Aula,AULA3} > saida.ls.out 2> saida.ls.erro.out
+# ls -l {Aula,AUALA3} > saida.ls.unico 2>&1   - joga erro e sucesso para o mesmo arquivo
+# ls -l && comando_inexistente > saida_padrao 2> saida_de_erro  - vai criar dois arquivos
+# ls -l && comando_inexistente > saida_ls.out 2>&1  - enviar sucesso e erro para o mesmo arquivo
+# tr 'a-z' 'A-Z' < alunos.txt	==	# cat alunos.txt | tr 'a-z' 'A-Z'
+# tee - imprime na tela e joga para um arquivo o conteudo, por padrão sobrescreve o arquivo se já existir
+# ls -l | tee -a --apend log.out  = alem de jogar na tela faz um append no log.out
+# wc -l file1.txt | tee file2.txt = conta as linhas, joga na tela, salva no file2.txt
+# xargs - consegue passar vários entrada para o saida 
+# find /home -iname "Aula3*" | xargs ls -l
+# find /home -iname "Aula1*" | xargs rm --verbose - remove os arquivos para as ocorrências
+# echo 1 2 3 4 5 6 | xargs -n 2
+# seq 15 | xargs -n 3
+# cat arquivo.txt | xargs touch  - cada linha do arquivo.txt vai virar um novo arquivo em branco
+
+-- CRIAR, MONITORAR PROCESSOS
+
+-> PID = Process id
+-> PPID = Parent Process ID = processo pai
+-> Init sempre recebe o id=1. Todos os processos sao processos filhos do init
+# ps - report a snapshit of the current processes, report process status
+# ps -ua - u= modo usuario, a= todos, x=mosta nao iniciados, -f= formato de árvore
+# ps axu | less
+# ps axu | grep photo
+# ps aux | grep init
+# ps u -C VBoxCliente   -C- select by command name
+# pstree - mostra os processos no formato de uma arvore
+# pstree -c --compact -p --show-pids -s --show-parents
+# pgrep bash - id dos processos que chama BASH
+# top - admin monitirar o servidor em uma tela interativa
+	# k + pid = matar um processo
+	# shitf + M - ordena por memoria
+	# shitf + P - ordena por CPU
+	# ? ou h = ver opcoes do TOP
+	U = abre uma caixa de diálogo -> digitar o nome do processo	
+-> load avarege - medias dos processos em execucao
+# top -b - joga a info na tela
+# top -b -d3 -n3 - A cade 3 segundos mostra dados de 3 processos. Pode jogar para um arquivo de texto
+# fg - move jobs to th foreground
+# bg - move jobs to the background
+	# ctrl + Z + bg ou fg para movimentar o processo
+# firefox &
+# pgreo firefox
+# pgrep - informe o nome do processo e retorna o pid
+# pgrep -u root | less
+# ps aux | grep firefox
+# kill [pid] - send a signal to a process. Mata o processo pelo pid PADRAO KILL SOFT = 15 = SIGTERM
+# man kill
+# kill -l --list - lista os possiveis tipos de kill
+# kill - envia um sinal para o preocesso. PADRÃO SIGTERM = 15
+# SIGUP(1) - termina, reinicia processo
+# SIGINT(2) - interrempo o processo = ctrl + Z
+# SIGQUIT(3) -
+# SIGTERM(15) - padrao, solicita que finaliza
+# SIGKILL(9) -mata abruptamente
+# kill -s SIGTERM [pid] == # kill -s 15 [pid]
+# kill -SIGKILL [pid] - nao precisa colocaro -s
+# kill 4451 - mata de maneira soft
+# killall - mata processo pelo nome
+# killall httpd
+# pkill firefox - encontra o processo e mata ele
+# pkill -9 firefox -u lpi1 - mata o firefox do usuario lpi1
+# uptime - quanto tempo o sistema está ligado, apresenta um load average tambem
+# uptime -s --since
+# free - monitorar uso da memória, muita swap em uso o sistema fica lento
+# free -m = mostra em mega
+# screen - Ferramenta de trabalhar com multiplas abas, gerenciado de tela	# yum install screen
+	# crtl + a + c = create nova aba
+	# crtl + a + n = next entre abas
+	# crtl + a + t = desatachar aba
+	# exit
+# screen -ls - lista as abas
+# screen -r = return	
+-> jog = Processo em background
+# firefox &
+# crtl + Z = stop o job		# bg = coloca o ultimo processo trabalhado em backgound
+# jobs - display status jobs - Processo em background	
+# nohup - sistema roda script, software em background. Nao aceita o sinal hup quando cair a desconexao do ssh
+# nohup firefox &
+# watch - executar um programa periodicamente, por PADRAO a cada 2 segundos
+# watch date
+# watch -n60 free - checa a memoria a cada 60 segundos
+# tmux - ferramenta de controlar vários terminais	# yum install tmux
+# tmux list-sessions	# crtb + b para chamar e depois mais uma letra
+# tmux attach -t o - atachar a secao 0
+	# ctrl + b + c = create
+	# crtl + b + o = rotacionar entre as janelas
+	# crtl + b + p = previus
+	# crtl + b + n = next
+	# crtl + b + w = windows
+	# crtl + b + % = dividir vertical
+	# crtl + b + " = dividir horizotalmente
+	# crtl + b + d = desatachar
+# nice - define o nivel de NICE dos processos
+	-> nice é inversamente proporcional ao nivel de prioridade
+-> no nice tem as opcoes --, -, -n e chama pelo nome o programa
+-> no renice tem que ser pelo pid e tem apenas a opcao - e -n e direto o pid
+# firefox = nivel de nice é ZERO se chamar um comando sem usar o nice
+# nice firefox & - nice é 10. Se usar o comando nice na frente, eleva o nice. nice padrao é 10
+RANGE -20 (maior prioridade) até +19 , quanto mais legal o processo, menor a prioridade
+por padrão o nice de um processo é 0 (zero), se usar o comando nice na frente fica DEZ (10).
+# renice - set nice values of running processe, alter priority of running processes
+# nice -15 firefox & ==  # nice -n 15 firefox &
+# nice --15 gnome-calculator & == # nice -n -15 gnome-calculator &
+# renice -7 [pid] == renice -n -7 [pid]
+# renice 7 [pid] == renice -n 7 [pid]
+
+
+# sed - editor para filtrar, modificar textos
+# sed -i 's/palavra/outra/' arquivo.txt
+# sha256sum - compute and check sha256 message digest
+# sha512sum - compute and check sha256 message digest
+# md5sum -  Calcula e verifica o resumo de uma msg MD5
+# grep - busca por padrões específicos
+# fgrep - atalho para grep -F. Habilita metacaracteres
+# egrep - atalho para grep -E. Permite uso de empressões regulares
+# sed - lê arquivo e retorna seu texto
+# sed '1d' texto.txt = deleta a primeira linha
+
+REGEX
+conjunto de caracteres/meta caracteres para definir um padrao
+Repetição
+Uma expressão regular pode ser seguida por um dos vários operadores de repetição:
+
+Character Classes ( Definem, grupos)
+	ponto = quanlquer caracter,	[] = listas,	[^] = listas negadas
+
+Quantificadores
+.	O item aparece uma unica vez
+?	O item anterior é opcional e corresponde ao máximo uma vez. (uma ou nenhuma)
+*	O item anterior corresponderá zero ou mais vezes. (tanto faz)
++	O item anterior será correspondido uma ou mais vezes. Pelo menos 1 vez.
+{ n }	O item anterior é correspondido exatamente n vezes.
+{ n ,}	O item anterior corresponde a n ou mais vezes.
+{ n , m }	O item anterior é correspondido pelo menos n vezes, mas não mais que m vezes.
+
+Ancoragem
+O sinal de intercalação ^ e o cifrão $ são metacaracteres que correspondem respectivamente à sequência vazia no início e no final de uma linha.
+ \b =começo e fim de uma palavar. 	^ começo, 	$ final
+# egrep '\bLinux\b' texto.txt  - \b usado para definir uma palavra - apenas ocorrencias Linux
+# egrep '\bLinux' texto.txt  - ocorrência de Linux e linuxUbuntu - apenas começa com linux
+
+Interpretadores
+# echo "A versão do Kernel é: "`uname - s --kernel-name`"
+# echo "A versão do kernel é: $(uname -r --kernel-release)"
+
+# cd /Exercicios
+# grep Linux arquivolongo.txt
+# grep -c --count Linux arquivolongo.txt - conta o numero de ocorrencias
+# grep Linux * - vai buscar em todos os arquivos da pasta atual
+# grep Linux /etc/*
+# grep -i --ignore-case linux arquivolongo.txt - ignora o case sentitive
+# grep -r --recursive Linux arquivolongo.txt - recursivo, busca dentro de subdiretorios
+# grep -E  == egrepLinux arquivolongo.txt - expande as expressoes regulares
+# fgrep = NÃO aplica expressoes regulares
+# grep -c --count "^$" arquivolongo.txt - conta o numero de linhas vazias
+# egrep "^Linux" texto.txt - Linux no começo das linhas
+# egrep "Linux$" texto.txt - Linux no final das linhas
+# egrep "O.Linux" texto.txt - apenas 1 caracter entre o O e o Linux - O Linux  - ocorrencias de um espaço entre o O e Linux
+# egrep "b[aei]g" texto.txt - bag, bege, beginner, bigger, bege, bugzilla
+# egrep "b[a-u]g" texto.txt - bag, beg, bug, bigger
+# egrep "b[a-u]g*" texto.txt - bag, beg, bug, bigg *, nenhuma ou várias vezes
+# egrep "b[a-u]g." texto.txt - mínimo 4 letras - . significa uma única letra - begi nner, bigg er, bugz illa, bege
+# egrep "b[a-u]g..." texto.txt - mínimo 3 letras após b[a-i]g - beginne er, bigger, bugzil la
+# egrep "b[a-u]g+" texto.txt - pelo menos 1 letra após b[a-i], mas pode ter várias - bag, beg, bog, bug, beg inner, bigg er, bug zilla, beg e
+# egrep "b[a-u]g?" texto.txt - anterior nenhum ou apenas 1 vez - bag, beg, big, bog, beg inner, big ger, bug zilla, beg e
+# egrep "b[a-u]g{2,}" - g corresponde a 2 ou mais vezes - bigg er, begggis
+# egrep -i "Linux\." texto.txt  -\ protege metacaracteres de serem interpretados, -i igonara case sensitive = linux.com
+-> no grep interpreta a \, no sed \ faz não ser interpretado
+# egrep '\b[Ll]inux\b' texto.txt  - \b usado para definir uma palavra
+# egrep 'ba{1,3}h' texto.txt - bah, baah, baaah  - colchetes define quantas vezes o caracter anterior  (a) pode aparecer = 1-3
+# grep 'ba{1,3}h' texto.txt -   - ba{1,3}h - unica ocorrência. No grep precisa da barra para interpretar 
+# egrep 'ba\{1,3\}h' texto.txt - barra faz interpretar no grep, bah, baah, baaah. As \ \ tem que estar casadas
+# egrep 'bag|beg|blog' texto - o | e usado como ou, bag ou beg oyu blog, qualquer ocorrência
+# egrep '(bag|beg)inner' texto - begginer
+# egrep '(bag|beg)?inner' texto - begginer, w inner  - 0 ? faz o bag|beg ser opcional
+# sed - stream editor for filtering and transforming text
+# sed -i - edita o arquivo original
+# sed '/^#/d" texto.txt - deleta todas as linhas que começam com #
+# sed 's/^#/hashtag/' texto.txt  - substitui # por hashtag
+# sed '/[Ll]inux/d' texto.txt - deleta Ll[inux]
+# sed 's/[Ll]inux/Windows/' texto.txt  - troca Linux por Windows
+
+
+-- EDITOR VIM
+
+vi --version
+
+mode navegacao
+/palavra a ser localizada de cima para baixo [enter]
+n = next | N = next de baixo pra cima
+? palavra localizada de baixo para cima
+h = <-
+j = baixo - dedo indicador
+k= cima
+l = ->
+
+mode de insercao = tecla i ou insert
+
+o- inserir a partir da linha de baixo
+O - inserir a partir da linha de cima
+a - editar a partir do proximo caracter
+A - editar a partir da fim da linha
+
+v - ativa o mode de seleção, usa os direcionais para selecionar e depois copia e cola
+cc - cut
+p - paste
+dd - corta a linha atual:
+d10d - corta as 10 proximas linhas
+yy - copy
+y5y - copia as 5 proximas linhas
+
+:w - salvar
+:q - sair
+:q! - forcar a saida sem salvar
+
+Maneiras de salvar e sair
+:wq! - salvar e forcar saida
+:x - salvar e sair
+ZZ - salvar e sair
+
+entrar direto no vi e depois salvar o arquivo
+vi
+esc :w nome-do-arquivo.txt
+echo "Inserir conteudo no final" >> nome-do-arquivo.txt
+:e  ou :e! = vai atualizar o arquivo
+
+
+
+--------------------------------------------------------------------
+104. SISTEMAS DE ARQUIVOS LINUX
+
+# fdisk -l --list  = lista dos discos
+# fdisk /dev/sdb = entra no fdisk
+options L - lista partições | n - add | p - print partition table | F - particionadas livres
+v - verify | w - write | t - change | d- delete | q -quit
+informar o tamanho final do setor = +500m, +1G
+
+# F - lista free unpartition space
+# t - altera | # 82 swap
+
+Tipos de Label
+	# g - GPT
+	# G - SGI (IR
+	# o - DOS
+	# s - SUN
+
+# gdisk - fdisk para partição GPT
+# gdisk /dev/sda - Criar as partições
+# fdisk -l --list /dev/sda - Lista antes de criar os Sistemas de arquivos
+# fdisk -t --type - reconhece o tipo de tabela de partição
+# mkfs -t ext3 /dev/sda1 = mkfs.ext3 dev/sda- Make Filesystem ext3 
+# file -s /dev/sda1  -determina um tipo de arquivo
+# mkfs -t vfat /dev/sda2
+# mkfs.ext2, mke2fs, mkfs.ext3, mkfs.xfs, mkfs,ext4, mkdosfs, mkfs.vfat
+
+# mkswap /dev/sda5- formanto como area de swap
+# swapon /dev/sda5
+# swapoff --all
+# cat /proc/swaps
+# vim /etc/fstab
+	/dev/sda5	swap	swap	defaults	0	0
+
+# parted -l --list mostras todas as partições e tipo de arquivo
+# parted /dev/sdb - mais completo que fdisk, mudar o tamanho da partição
+	#p - lista table parted
+	# resizepart [numer][new_final] = # resizepart 5 4000MG
+	# mkpart primary ext4 500GB 1000GB - criar a partição sem definiar o filesytem	
+	# mlpartfs primary ext4 500GB - cria o filesystem 		
+ 	
+# gparted - particionar de forma gráfica
+
+-- Tipos de File System
+
+# apt-get install btrfs-progs
+# mkfs.btrfs -f /dev/sdb3 - f = força a instalação do filesystem
+-> Btrfs
+	-> Foco em tolerãncia a falhas e facilidades de adim e reparos
+	-> B-tree file system
+	-> Converte ext3 em btrfs
+	-> Suporte raid, subvolumes, snapshot
+-> ExFat
+	-> ExtendeFAT ou FAT64
+	-> Otimizada para pendrives e cartões de memória
+	-> Intermediário entre FAT e NTFS
+	-> fat máximo = 4GB, extFat máximo = 16 HexaByte
+	-> pacotes apt install exfat-fuse, exfat-utils
+# mount /dev/sdb1 /media/penvrive
+# df -T --print-type /dev/sdb2 = informações sobre sistema do sistema arquivos
+# apt install exfat-fuse exfat-utils
+# mkfs.exfat /dev/sdb1
+# mount /dev/sdb1 /media/pendrive
+
+-> ext2 - Original do Linux, sem journal
+journal = grava um log de registro, restaurar dados em falha de energia
+-> ext3 - ext2 com journal
+-> ext4 - melhoraria ext3
+-> ReiserFS - melhor performance com arquivos pequenos
+-> vfat - utilizada windows, sem jornal
+
+# df - mostra todas partoções, disco usado e disponível, particoes montadas
+# df -ahTi --all --human-readable --print-type --inodes
+Obs: Um partição além do limite físico, tem o limite de inodes
+# du - disk usage, quanto usado de cada diretório
+# du -ahc --all --human-readable --total
+# du -ah /dev --max-depth=1  - apenas 1 diretorio
+		/dev/subpasta
+# du -ah /dev --max-depth=3  - apenas 3 diretorio
+		/dev/subpasta1/subpaste2/subpastas3
+# ls -l /sbin/fsck* - varioções do fsckfs
+# fsck - check and repair a linux filesystem. Partição tem que estar DESMONTADA
+# parted -l - para ver as particoes que seram reparadas # man fsck
+# fsck -t fat = fsck.fat  -l = trava o dispositivo para garantir acesso exclusivo
+# fsck.xfs = fsck -t fsck
+# fsck /dev/sdb2 - Senão informar o tipo de filesystem, autodetecta
+# fsck.fat /dev/sdb2
+# fsck.ext4 /dev/sdb5
+# fsck.extfat -> exfatfsck
+# fsck.ext2 # fsck.ext3 # fsck.ext4 = e2fsck
+# fsck -t ext4 /dev/sdb6
+
+# stat - info detalhadas sobre o filesystem
+# stat /dev/sdb5
+# tune2fs - fazer ajustes nas partições ext2/ext3/ext4
+# tune2fs -L "Particao rafael" /dev/sda1 = setou nome para partição
+# dumpe2fs - despeja informações de filesystem ext2/ext3/ext4
+# tune2fs -i 1m /dev/sda1 - setou check interval para 1 mês - Check interval
+# tune2fs -c 30 /dev/sda1 - a cada 30 montagens faz fsck - maximum mount count 
+# tune2fs -m5 /dev/sda1 - apenas 5% reservado sem uso - Reserved block count
+# dumpe2fs -h /dev/sda1 - verifica o nome setado e outras alteracoes -h = display superblock information
+
+--Partição xfs - tipo de sistemas de arquivos de alto desempenho
+# apt-get install xfs*
+# xfs_admin == tube2fs para sistema xfs
+# xfs_admin -L novo_nome_label /dev/sdb2
+# xfs_admin -l /dev/sdb2 - Print the current filesystem label.
+# mkfs.xfs /dev/sdb2
+# umount /dev/sdb2 - desmontar para usar xfs_admin
+# mount /dev/sdb2 /mnt/xfs/
+# df -T --print-type /dev/sdb2
+# xfs_info /dev/sdb2 - informações sobre filesystem montado
+# xfs_repair /dev/sdb3 - procura por erros e repara | desmontada
+# xfs_metadump - extrai todos os dados referebtes ao filesystem
+# xfs_db /dev/sda2 - debub an XFS filesystem - abre uma linha de comandos2
+	# help
+	# frag - xfs tem fragmentacao do disco
+# mount /dev/sdb3 /mnt/xfs
+# xfs_fsr /dev/sda3 - desfragmentar (reorganizar) o filesystem XFS
+# xfs_[TAB] - aparece comandos disponveis para XFS
+# xfsrestore
+# xfsettingsd
+
+-- Particao somente pode usar apos montada
+-> Via de regra, somente root pode usar mount/umount
+-> Opcao user/user no options do /etc/fstab habilita outros usuarios usar o mount
+-> ponto de montagem = diretório acessociado a partição.
+# mount e umont - apenas mudancas temporarias
+# mount - associa partições a ponto de montagem (diretórios)
+# mount - Lista tudo que esta montado
+# mount -a  - monta tudo do fstab (novas linhas)
+# umount -a - desmonta tudo do fstab, desde que não esteja em uso
+# mount --bind /opt /home/rafael/teste - associar diretorios a diretorios
+# df -a --all - mostra todos os pontos de montagens e partições
+# ls -lrt /home/rafael/teste - aparece conteudo do /opt
+# mkdir /tmp/teste_montagem
+# mount /dev/sdb6 /tmp/teste_montagem # df -h
+# umount /dev/sdb6 ou # umount /tmp/teste_montagem
+# vim /etc/fstab
+	<filesystem>	<mount point>	<type>	<options>	 <dump> <pass>
+	/dev/sr0	/media/cdrom	auto	noauto,users       0	   0
+	/dev/sda1	/tmp		auto	defautls     	   0       2
+dump = gerar um backup com essa opção. Em desuso
+pass = 1 = faz o fsck durante o boot no /
+UUID = Universally unique identifier = identificador universal
+# mount /dev/sr0 - Visto que já tem a info do ponto de montagem no ftab
+-> mount tem as mesmas opções de montagem que # cat /etc/fstab
+-> Opções de mount indicadas com -o
+# mount -o remount,ro /home
+# ls -lrt /proc/mounts - link para /proc/self/mounts
+# cat /proc/mounts
+# cat /proc/self/mounts - onde o df busca info dos pontos de montagens
+# cat /proc/self/mountinfo
+# systemctl list-units --type=mount  -l ista as unidades tipo mount 
+# systemctl status home-rafael-teste.mount
+
+
+# blkid - informacoes das particoes/ponto de montagem
+# blkid /dev/sdb1 - block device attributes
+# mount UUID="43863b..codigo longo" /mnt/xfs
+# mount LABEL="Particao rafael" /mnt/xfs
+# cd /dev/disk/by-uuid/  - acesso às partições UUID
+# lsblk - mostra todos os discos e as particoes dentro deles
+# lsblk -f --fs - mostra id e label = list block devices = info about filesystem
+# lsblk --output NAME, UUID
+
+-- Criando posto de montagens pelo systemd
+# mkdir /mnt/montagem
+# cd /lib/systemd/system
+# vi mnt-montagem.mount
+	[Unit]
+	Description=Ponto de Montagem teste
+	[Mount]
+	What=/dev/sdb2
+	Where=/mnt/montagem
+	Type=xfs
+	Options=defautls
+	[Install]
+	WantedBy=multi-user.target
+# systemctl daemon-reload
+# df /dev/sdb2
+# systemctl start | status | enable | mnt-montagem.mount
+
+
+-- PERMISSOES
+tipos de acordo com sigla
+	_ = arquivos
+	d = diretorio
+	l = link
+	c = dispositivo especial
+	p = canal fifo
+	s = socket
+
+arquivos
+	R=Read, w=Write, X=Execute
+diretorios
+	r = lisa conteudo = ls
+	w = criar e remover diretorio
+	x = acessor diretorio = cd
+
+Permissoes
+especiais = GUID, SGID, Sticky
+usuario = rwx
+grupo = rwx
+outros = rwx
+
+u-user | g-group | o-other | a-all
+operacao - + add, - remove, = equal
+
+# chmod - change permissions of a file
+# chmod g-w arquivo.out - remove write do grupo
+# chmod ug+x arquivo.out = adiciona ao grupo e usuario o Execute
+# chmod a+x = adiciona aa todos a permissao execute
+# ls -l = consegue ver as permissoes
+# chmod g+w aula3 - permissao de escrita adicionada ao grupo no arquivo
+# chmod o-rwx aula3 - permissao rwx removida do others no arquivo aula3
+# chmod o=rw aula3 - permissao other =rw no arquivo aula3
+
+--OCTAL	
+	R = 2pow(2) = 4
+	w = 2pow(1) = 2
+	x = 2pow(0) = 1
+Exemplo 0764 = rwxrw-r--
+	111=4+2+1=7
+	110=4+2+0=6
+	100=4+0+0=4
+Exemplo 0775 = rwxrwxr-x
+	4+2+1=7
+	4+2+1=7
+	4+0+1=5
+# chmod 775 aula 7 = # chmod u=rwx aula3
+		     # chmod g=rwx aula3
+		     # chmod o=rx aula3
+# stat aula3 - info de acesso do arquivo
+# chmod -R 644 [diretorio] - permissao 644 recursivamente dentro do diretorio
+
+ATRIBUTOS ESPECIAIS
+
+	-> Bits de mode de acesso
+-> Quando se executa um arquivo, ele sera executado com as permissoes de quem EXECUTA
+o script e nao com as permissoes do proprietario do arquivo
+# cat /etc/passwd
+# ls -l /usr/bin/passwd
+-> Mesmo nao sendo root, tendo a permssiao SUID o usuario consegue executar
+esse script e aletar sua senha
+-> -rwsr-xr-x
+      -> Onde seria um X tem um S de SUID = user
+# cd /Exemplos
+# chmod u+s Script_Exemplo.sh - permissao s no usuario para executar o script
+# chmod g+s Script_Exemplo.sh - rwsrwsr-x - SGID = group - Agora o grupo
+tambem executa com as propriedades do grupo original dele e nao com as
+propriedades do usuario.
+-> O usuario do consegue alterar as permissoes do arquivo que ele é PROPRIETARIO
+# ls -ld /tmp - por padrao tem o stick drwxrwxrwt
+-> stick é adicionado no OTHERS. Logo só quem criou o arquivo consegue apagar ele
+-> stick = preso ao dono
+-> t = prevalece sobre as outras permissoes
+-> O melhor exemplo do bit Sticky, é o diretório /tmp, a permissão do /tmp é drwxrwxrwt, 
+qualquer usuário pode criar um arquivo no /tmp, mas apenas quem criou o arquivo pode removê-lo ou alterá-lo.
+
+	SUID= 2pow(2) = 4
+	SGID = 2pow(1) = 2
+	Stick = 2pow(0) = 1
+Exemplo 6775 = sem as especiais = -rwxrwxr-x
+		com as especiais= -rwsrwsr-x
+	7661 = sem as especiais = -rw-rw---x
+		com as especiais= -rwsrws--t
+-> Se omitir o primeiro bit, vai supor que o arquivo nao tem 
+nenhum atirbuto especial
+# chmod o+t aula3 = adicionado stick ao other
+# ls -l aula3 = -rw-r--rwT
+	-> T = apenas o t | t = x + t	  
+S = apenas o s - valido para SUID e GUID
+s = x + s - valido para SUID e GUID
+# chmod 775 aula4 = removeu todas as permissoes especiais ao omitir o primeiro bit
+# chmod 4775 aula4 = -rwsrwxr-x - somente o user nos atributos especiais
+# stat aula4
+# umask - Ao criar um arquivo ele da as permissoes padrao se nao informar elas.
+Seria uma espécie de máscaras de permissões.
+# umask =0002
+-> arquivo 0002 = 664 = 666 - umask = 664
+-> diretorio 0002 = 777 - umask = 775
+# touch novo_arquivo.txt = -rw-rw-r--
+# mkdir novo_diretorio.txt = drwxrwxr-x
+# umask 022 - definida uma nova máscara
+# cd /user/Exemplos
+# chown - change owner
+# chown lpi2 aula3 # ls -l aula3 - lpi2 é o novo dono do arquivo
+# chown lpi2:suporte Aula3 = # chown lpi2.suporte Aula3
+->	user:group = user.group
+# chown :suporte Aula3 = # chown .suporte Aula3 - trocou apenas owner do grupo
+# chown -R lpi2 diretorio_novo = muda o owner do diretorio -R = recursivamente
+-> -R muda a propriedade de tudo que esta dentro do diretorio
+# chgrp - apenas para mudar o grupo
+# chgrp suporte Aula3 - suporte é o novo owner do grupo no arquivo
+
+--CRIANDO LINKS SOFTS E HARDS
+
+HARD links = link físico
+
+# ln - usado para criar links hard e soft
+# ls -li Script_Exemplo.sh = para exibir o inode
+# ln -P --physical arquivo_origem nome_link
+# ln arquivo_origem nome_link 
+# ln Script_Exemplo Link_Hard
+-> Somente hard Links na MESMA particao
+-> Nao tem como criar hard link para DIRETORIO
+-> Ambos os links apontam para o mesmo lugar 
+-> Hardlinks para o mesmo inode, têm a mesma permissão, donos, TAMANHO e data
+-> Se alterar a permissao ou conteúdo de um; altera o do outro também
+-> Acessando o mesmo ponto de dados através de nomes diferentes
+# rm -f Script_Exemplo.sh
+-> Não apaga o link_Hard, segue acessando o ponto de dados através
+do link_Hard. 2 Referências apontando para o mesmo inode
+-> Um arquivo só é realmente apagado, quando o seu último hardlink é apagado
+-> . e .. são hardlinks para diretórios criados exclusivamente pelo SO.
+
+SOFT links = link simbólico
+
+É um arquivo que vai apontar para outro arquivo
+# ln -s Script_Exemplo.sh link_simbolico
+# ls -li
+-> Link simbólico vai ser outro inode que aponta para o aquivo
+tem a flag "l", sempre a permissao 777 =rwxrwxrwx
+-> Tem sempre otamnaho da quantidade de bytes (caracteres) do caminho alvo (referência)
+-> Se remover o arquivos que ele aponta, o link é quebrado.
+
+-> link simbólico é um atalho e é possível apontar para OUTRA PARTIÇÃO
+-> Posso criar link simbólico para diretorio
+# ln -s /var link_simbolico_diretorio_var
+# ln -s --symbolic Script_Exemplo.sh.bkp 
+-> Um link físico pode ser visto como um novo arquivo que aponta para o mesmo volume de dados, são arquivos diferentes que utilizam o mesmo inode.
+-> No link físico (hard link), o arquivo destino e o link devem estar obrigatoriamente na mesma partição (isto não é obrigatório no link simbólico). 
+-> Como as definições de permissões são configurados no inode, e os dois arquivos compartilham o mesmo inode tem mesmas permissões de acesso.
+
+------------------------------------------------------------------
+104.7 LOCALIZAÇÃO DE ARQUIVOS NO LINUX
+
+Padrão de distribuição de arquivos no linux : FHS
+FHS FileSystem Hierarchy Standard
+
+DIRETÓRIOS OBRIGATÓRIAMENTE EM /
+
+DIRETÓRIO	FINALIDADE			EXEMPLO
+/bin		Programas Críticos/All Users	cp, ls, kill, rm
+/sbin 		Programas Críticos/SysAdmin	fdisk, fsck, mksf, quotaon
+/etc		Arquivos config. Systema	passwd, inittab, profile
+/mnt /media	Ponto Montagem de media		/mnt/dvd
+/pro /sys	Info de Hardware e Processos	interrupts, cpu
+/dev		Dispositivos Especiais		sda, sr0
+
+DIRETÓRIOS QUE PODEM SER MONTADOS
+
+/root		Diretorio padrão do root			
+/boot 		bootloader, iso de Kernet e initd
+/tmp		Arquivos temporários
+/home		Dir. e arquivos dos usuários
+/var		Arquivos dinâmicos como logs, filas, bando de dados
+/opt		Instalações de aplicações em geral
+/usr		Programas não criticos do linux
+/usr/local	Arquivos que o sysadmin instala local
+/usr/X11R6	Arquivos referentes a interface g¿afica
+/usr/bin	Comandos não essenciais. Todos os usuários
+/usr/sbin	Comandos não essenciais. Sysadmin
+/usr/lib	Bibliotecas do Progrmas
+/usr/share/man	Fontes do man	 
+	
+# find = search for files in a directory hierarchy
+# find aonde qual_caracteristica arquivo
+# find /home -name Aula* = Tudo que começa com Aula no /home
+# find /home -user lpi1
+# find -size +50M = arquivo com mais de 50 Mega
+# find -size -1G = arquivo com menos de 1 Giga
+
+# xargs - Combina o argumento inicial com oos argumentos recebidos
+da entrada padrao, de forma a executar o comando espefificado uma
+ou mais vezes.
+xargs delimita o fim da entrada po espacos em brancos ou quebras de linhas
+# find ./ -name teste2 | xargs ls -l = da um ls -l na saida do primeiro comando
+# find ./ | xargs ls -l = vai dar alguns erros
+# find ./ | cat -A = vai mostrar as quebras de linha
+-print0 = trocar o new line pelo null para quebra de arquivos
+# find ./ -print0 | xargs ls -l = corrige os erros 
+-> Find é o comando mais completa para busca, mas mais lento
+
+# locate - find files by name
+Procura o que tem a STRING informada
+# locate rpm = retorna tudo que tem rpm no nome do arquivo
+Locate é baseado em um base de dados, então é mais rápido
+que o comando find, mas tem que atualizar essa base
+# updatedb = atualiza a base de dados do locate
+# cat /etc/updatedb.conf
+
+# whereis - locate binary source and manual page
+whereis procura arquivo executáveis, libs, manuais, fontes
+Só procura a referência no começo do arquivo
+# whereis fsck
+# whereis tar
+# whereis ls = /bin/ls	
+
+# which - Procura apenas no PATH da sessão atual
+# env | grep PATH 
+PATH=/usr/local/sbin:usr/local/bin:outros diretorios...
+o which vai procurar apenas nesses diretorios
+
+# type = mostra o tipo de comando. Pode ser um
+programa interno do bash, externo, pode ser um link
+# type ls
+# type cd = cd is a shell builtin
+# type tar = tar is /bin/tar
+
+--------------------------------------------
+105.1 . CUSTOMIZAÇÃO E USO DO AMBIENTE SHELL
+
+
+# cat /etc/profile: Arquivo de inicialização executado durante o processo de login de todos os usuários do sistema.
+Em caso de processo de login, será sempre o primeiro #arquivo executado.
+# cat/etc/profile.d/: Todos os scripts presentes nesse diretório serão executados durante o processo de login de cada usuário do sistema.
+# cat /etc/bash.bashrc: Arquivo executado para toda nova sessão de shell bash, aplicado a todos os usuários. 
+# cat /etc/inputrc: Arquivo global utilizado para customização de opções do teclado e de comportamento do terminal.
+# cat /etc/skel/ : Todos os arquivos e diretórios presentes nesse diretório serão incluídos no diretório home de novos usuários criados no sistema.
+
+
+Arquivos de configuração locais, de cada usuário:
+
+~/.bash_profile: Se existir, o arquivo é executado após o /etc/profile, durante o processo de login do usuário.
+~/.bash_login: Se .bash_profile não existir, o arquivo é executado automaticamente durante o processo de login, após a execução do /etc/profile.
+~/.profile: Não existindo .bash_profile e .bash_login, o arquivo é executado durante o login após a execução do /etc/profile.
+~/.bashrc: Executado automaticamente em toda nova sessão de shell bash, logo após o /etc/bash.bashrc.
+~/.inputrc: Implemente a nível de usuário vinculações de teclas e opções referentes ao terminal
+~/.bash_logout: Arquivo executado durante o processo de logout do usuário
+* As configurações globais são sempre executadas primeiro que as configurações locais.
+ O que significa também que as locais podem "sobrescrever" as globais.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

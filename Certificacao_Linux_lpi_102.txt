@@ -207,7 +207,7 @@ KDE, GNOME, MATE = desktop enviroment = conjunto de aplicações com finalidade
  # xauth add 192.168.113.0 MIT-MAGIC-COKKIE [hash number do server]
  # gnome-calculator - vai ter que aparecer no cliente
 
-		PROCOLOS DE ACESSO REMOTO 
+		PROTOCOLOS DE ACESSO REMOTO 
 XDMCP = x Display Manager Control Protocol
 VNC = Virtual Networking COmputing - utilizad protocolo RFB
 SPICE = Silmple Protocol for independent Computing Environment = Open Source
@@ -215,6 +215,86 @@ RDP = Remote Desktop Protocol = Microsoft
 
 # apt-get install kmag = forma de aumentar o tamanho da tela
 # cat #HOME/.xsession-errors  = confirir logs referente a sua sessao no servidor
+
+------------------------------------------------------------------
+		GERENCIAMENTO DE ATIVIDADES
+uid - id usuário	gui - id do grupo padrão obrigatório
+root - id zero		usuiarios adicionados manualmente começa em 1000
+
+user name: senha : user id : user group : descricao : home do usuario : shell padrão
+rafael   : xxxxx : 1000	   : 1000	: Rafael Lu : /home/rafael    : /bin/bash
+	/bin/false = não consegue logar no bash
+# vim /etc/passwd	- arquivo com os usuarios do sistema
+			- não editar na mão, editar por linhas de comando
+# vim /etc/shadow	- contém as senhas dos usuários
+# vim /etc/group	- arquivo com os grupos		
+		nome do grupo : senha : id dos usuarios que pertecem ao grupo
+# vim /etc/gshadow 	- contem as senhas dos grupos
+# vim /etc/login.defs	- definicoes de login de usuário
+				uidmin - uidmax
+				CREATE-HOME	YES (cria o home ao criar o usuário)
+# useradd
+# userdel
+# usermod
+# useradd usuario1	- criou usuario e grupo usuario1 /$HOME/usuario
+# useradd -c "Nome do usuario" -s /bin/bash -g 1001 usuario2
+	-c=comentario	-s=shell	-g=grupo	-m=cria o home do usuario
+	-u=userid	-g= grupo padrao		-G=outros grupos do usuario
+# useradd -m -s /bin/bash -u 1005 usuario3
+# ls /home
+# grep usuario2 /etc/passwd	# tail /etc/passwd
+# grep usuario2 /etc/shadow
+# grep usuario2 /etc/group user
+# userdel usuario3
+# userdel -r usuario2 - deleta usuario recursivamente o /home
+# usermod -- help
+# usermod -c "Nome do novo usuario" usuario5
+# usermod -s /bin/ksh usuario3
+# passwd - trocar a senha do proprio usuario. Senão tem senha fica um ! no compo senha e usuario
+		não consegue logar. root altera senha de todos os usuarios.
+# passwd usuario5
+# su usuario5	- loga como usuario5
+# adduser - script para criar usuário que pede senha no final
+
+# groupadd suporte	- criar o grupo sem senhum usuario
+# groupadd -g 2000 testadores 	- idgroup=2000
+# groupdel testadores	- deleta grupo testadores
+# groupmod -n tecnico suporte	- grupo suporte vira tecnicos
+# groupmod -g 2001 desenvolvedores - modificou id do grupo para 2001
+# usermod -g suporte usuario5	- usuario5 adicionado grupo suporte
+# usermod -G desenvolvedores usuario5	- usuari5 add ao grupo desenvolvedores (não é o grupo padrão)
+# usermod -a -G testadores usuario5	- adiciona a maus um grupo secundario sem sair do outro grupo 
+
+# newgrp	- usuario vai assumir um no grupo o qual ele faz parte
+# newgrp desenvolvedores	- usuario vai criar arquivos como se fosse do grupo desenvolvedores
+	Após criar um senha para o grupo. O usuario que quiser pode fazer parte do grupo	
+	pode se inserir nesse grupo
+# gpasswd dev	- criar senha para o grupo dev
+# tail /etc/gshadow
+# newgrp dev	- informa a senha e o usuario logado agora esta navegando como do grupo dev
+# id	- mostra uid, guid, grouo a qual pertence
+	- id = print real an effetctive user and group Ids
+# id usuario5
+# groups	- Lista os grupos do usuario logado
+# groups usuario5
+# getent	- obter info dos usuario, grupos e info de rede
+# getent passwd usuari5
+# getent group usuario5
+# getent group dev
+
+# chage --help
+# chage	-l usuario5	- change user password expiry information
+# chage -M 10 usuario6	- vai ter que trocar a senha a cada 10 dias
+# chage -m 2 usuario6	- mínimo de 2 dias para alterar a senha
+# chage -d 2017-01-01 usuario6	- altera para essa data a ultima vez que trocou a senha
+# chage -E "2020-12-17" usuario6	- informa a data que expira a conta
+# cat /etc/shadow	- onde ficam gravas essas informacoes
+	data = numero de dias de 01/01/1970
+# chage -E -1 usuario6	- conta volta a não experirar
+# chage -d0 usuario6	- obriga o usuario a trocar a senha no próximo logon
+------------------------------------------------------------------
+		AGENDAMENTO DE TAREFAS - CRON
+
 
 
 

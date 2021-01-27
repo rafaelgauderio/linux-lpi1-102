@@ -1,0 +1,341 @@
+MYSQL referencia CERTIFICACAO LPI1
+
+INSTALAR MARIA DB E MYSQL
+
+sudo apt update
+
+sudo apt purge mariadb-server
+sudo apt install mariadb-server
+yum install mariadb-server (Redhat)
+sudo apt install mariadb-server-10.1
+dkpg --configure -a (se der erro na instalação)
+
+sudo mysql_secure_installation
+sudo mysql
+GRANT ALL ON *.* TO 'admin'@'localhost' IDENTIFIED BY 'password' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+exit
+
+apt --fix-broken install
+sudo apt install mysql-workbench-community
+
+
+sudo systemctl status mariadb
+sudo mysqladmin version
+mysqladmin -u admin -p version
+
+------------------------------------------------------
+
+
+IMPORTAR UM BANCO DE DADOS FUNCIONARIOS
+
+# wget https://github.com/datacharmer/test_db/archive/master.zip
+
+# unzip master.zip
+
+# cd test_db-master
+
+# mysql -u root -p < employees.sql
+---------------------------------------------------------
+
+EXPORTING DATABASE
+
+# mysqldump -s username -p database_name > data-dump.sql
+
+#head -n 5 data-dump.sql (inspencionando o arquivo)
+-------------------------------------------------------------
+
+
+IMPORTING THE DATABASE
+
+# mysql -u root -p
+
+#mysql > CREATE DATABASE new_database; crtd+D (sair do mysql)
+
+#mysql -u username -p new_database < data-dump.sql
+------------------------------------------------------------
+COMANDOS DE SELEÇÃO
+
+mysqlshow
+
+#show databases
+
+# mysql employees -u root -p
+
+AGORA DENTRO DO BANCO
+
+# USE employees
+
+# SHOW TABLES;
+
+# DESCRIBE departments;
+
+# SELECT dept_no AS numero_do_departamento, dpt_name AS nome_departamento
+# FROM departments; 
+
+# SELECT * FROM departments LIMIT 5;
+
+# SELECT * FROM employees LIMIT 10;
+
+# DESCRIBE employees;
+
+# DESCRIBE salaries;
+
+# SELECT COUNT(*) FROM employees; --conta o numero de registro
+
+## SELECT COUNT(*) FROM titles; --conta o numero de registro
+
+# SELECT emp_no, first_name, last_name FROM employees LIMIT 15;
+
+# SELECT * FROM employees WHERE hire_date > "2000-01-01" LIMIT 15; --vai mostrar apenas 12 registros
+
+# SELECT COUNT(*) FROM employees WHERE hire_data > "2000-01-01" LIMIT 15; --vai mostrar apenas 12 registros
+
+# SELECT * FROM employees WHERE hire_date > "2000-01-01" AND gender="F";
+
+# SELECT * FROM employees WHERE hire_date > "2000-01-01" AND gender!="F";
+
+# SELECT * FROM employees WHERE hire_date > 1999-01-01 AND gender="F" AND first_name LIKE "S%" --nome começa nom "S";
+
+# SELECT * FROM employees WHERE (hire_date > 1999-01-01 AND hire_date < "1999-06-01")
+# AND gender="F" AND first_name LIKE "S%" --nome começa nom "S";
+
+# SELECT * FROM employees WHERE (hire_date > 1999-01-01 AND hire_date < "1999-06-01")
+# AND gender="F" AND (first_name LIKE "S% OR first_name LIKE "P%"); --usar parênteses na condição OR
+ 
+# SELECT * FROM employees WHERE (hire_date > 1999-01-01 AND hire_date < "1999-06-01")
+# AND gender="F" AND (first_name LIKE "S% OR first_name LIKE "P%")
+# ORDER BY first_name;
+
+# SELECT * FROM employees WHERE (hire_date > 1999-01-01 AND hire_date < "1999-06-01")
+# AND gender="F" AND (first_name LIKE "S% OR first_name LIKE "P%")
+# ORDER BY first_name DESC; --ordena de maneira descrescente
+
+# SELECT * FROM employees WHERE (hire_date > 1999-01-01 AND hire_date < "1999-06-01")
+# AND gender="F" AND (first_name LIKE "S% OR first_name LIKE "P%")
+# ORDER BY hire_date ASC; --ordena de maneira ascendente
+
+# SELECT emp_no AS codigo, fisrt_name AS nome, last_name AS sobrenome
+# FROM employees WHERE (hire_date > 1999-01-01 AND hire_date < "1999-06-01")
+# AND gender="F" AND (first_name LIKE "S% OR first_name LIKE "P%")
+# ORDER BY first_name DESC; --usando o AS para renomear os campos
+
+
+
+#--Unindo tabeleas para consulta
+
+#--contar homens e mulheres
+# SELECT COUNT(gender) AS total_de_funça FROM employees;
+# SELECT COUNT(*) FROM employees GROUP BY gender --separado mulheres e homens;
+# SELECT gender, COUNT(*) AS Contagem_Pessoas FROM employees GROUP BY gender;
+# SELEC COUNT(gender) AS Contagem_de_Mulheres FROM employees WHERE gender="F";
+
+
+# USE employ
+# DESCRIBE salaries;
+# SELECT * FROM salaries LIMIT 10;
+# SELECT * FROM salaries WHERE salary > 150000 LIMIT 30;
+# SELECT * FROM salaries WHERE salary > 120000 LIMIT 30 ORDER BY emp_no LIMIT 15; --comando LIMIT sempre no final
+# SELECT * FROM salaries WHERE salary > 153000 ORDER BY salary DESC;
+# SELECT SUM(salary) AS total_em_salarios FROM salaries WHERE salary > 153000; --somatorio da consulta anterior
+
+# SELECT emp_no AS numero_do_funça, salary, from_date, to_date
+# FROM salaries WHERE salary > 120000 
+# ORDER BY numero_do_funça LIMIT 15; 
+
+# --data usada para considerar até a data atual = 9999-01-01
+# SELECT * FROM salaries WHERE salary > 150000 AND to_date="9999-01-01 LIMIT 5" ; 
+
+#--Saber quantos funcionários ganham na faixa de maior que 120.000 e menor que 150.000
+# SELECT salary DIV 1000 AS faixas_salariais, COUNT(*) FROM salaries
+# WHERE salary > 120000 AND salary < 150000 AND to_date="9999-01-01" GROUP BY faixas_salariais";
+
+ 
+#juntar tabelas para saber nome e salario na mesma consulta
+# SELECT * FROM employees LIMIT 10; --tem o nome e emp_no
+# SELECT * FROM salaries LIMIT 10; -- tem o emp_no e salario
+
+# SELECT employees.emp_no, employees.first_name, employees.last_name, salaries.salary FROM employees
+# INNER JOIN salaries
+# ON employees.emp_no = salaries.emp_no -- qual indice (FOREING KEY) as tabelas se relacionam
+# WHERE salaries.to_date="9999-01-01" AND salaries.salary>150000 --apenas o último salario e > 150000
+# ORDER BY salaries.salary DESC;
+
+# SELECT employees.emp_no, employees.first_name, employees.last_name, titles.title, salaries.salary FROM employees
+# INNER JOIN salaries ON employees.emp_no = salaries.emp_no
+# INNER JOIN titles ON salaries.emp_no=titles.emp_no
+# WHERE salaries.to_date="9999-01-01" AND salaries.salary>150000
+# ORDER BY titles.title
+
+
+----------------------------------
+INSERINDO DADOS
+
+# SHOW TABLES
+# SELECT * FROM departments
+
+# INSERT INTO departments (dept_no, dept_name) 
+# VALUES ("d100","IT");
+
+# INSERT INTO departments (dept_no, dept_name)
+# VALUES ("d101,"Suport");
+
+# INSERT INTO titles (emp_no title, from_date, to_date)
+# VALUES (500000, "Enginneer", "1998-12-17","9999-01-01");
+
+# INSERT INTO departments
+# SET dept_no="d103", dept_name="Dev");
+
+# UPDATE departments SET dept=name"Desenvolvedores" WHERE dept_no="d100";
+
+# UPDATE departments SET dept_no="d200" WHERE dept_name LIKE "%Suport%";
+
+--sempre fazer um SELECT com as mesmas condições antes de aplicar o delete
+# SELECT * FROM departments WHERE dept_no="d200";
+# DELETE FROM departments WHERE dept_no="d200";
+# DELETE FROM departments WHERE dept_name LIKE "D%"; 
+# --apaga departamentos que começam com D
+
+--------------------------------------------------
+BÓSON TREINAMENTOS
+
+# apt-get update
+# apt-get install mysql-server mysql-cliente
+# service mysql status
+# apt-get install mysql-workbench
+
+# CREATE DATABASE [IF NOT EXISTS] nome_do_banco;
+# SHOW DATABASES;
+# USE nome_do_banco
+# SELECT DATABASE(); - visualizando o banco selecionado
+# DROP DATABASE [IF EXISTS] nome_do_banco; - excluir o banco
+
+Principais constraints
+ NOT NULL, UNIQUE, PRIMARY KEY, FOREIGN KEY, DEFAULT
+UNIQUE - É possível ter várias constraints UNIQUE em uma mesma tabela,
+mas apenas uma PRIMARY KEY. PK pode ser composta
+PRIMARY KEY - identifica de forma unica cada registro na tabela
+FOREIGN KEY - Criar relacionamento entre as tabelas do banco de dados
+DEFAUTL - inserir valor padrão em uma coluna, valor será adicionado a todos os novos registros,
+caso nenhum novo valor seja informado.
+
+# CONSTRAINT fk_codigo_autor FOREIGN KEY (codigo_autor) REFERENCES table_autores (codigo_autor)
+
+# [CONSTRAINT codigo_cliente] FOREIGN KEY (nomes das colunas separadas por virgula)
+# REFERENCES nome_da_tabela_pai (nome das colunas separados por vírgula na tabela pai)
+# [ON DELETE ação referencial] 
+# [ON UPDATE ação referencial]
+
+ON DELETE - ação executa ao registro excluido de uma tabela pai
+ON UPTADE - ação executada quando um registro for atualizada na tabela pai
+CASCADE - Permite excluir ou atualizar registro relacionados presentes na tabela filha 
+automaticamente ao alterar o registro na tabela pai.
+RESTRICT - Impede que ocorre update, delete na tabela pai.
+SET NULL - definido como NULL o campo na tabela filha ao alterar o registro na tabela pai
+NO ACTION - Verificação de integridade referencial é executada após a tentativa de 
+alterar a tabela.
+SET DEFAULT - Define um valor padrão na tabela filha, ao alterar o registro referenciado
+na tabela pai
+
+
+# CREATE DATABASE familia;
+# USE familia ;
+
+# CREATE TABLE Pai ( ID_Pai SMALLINT PRIMARY KEY, Nome_Pai VARCHAR(50) );
+
+-- ID_Pai vai ser chave estrangeira na tabela filho
+# CREATE TABLE Filho (
+# ID_Filho SMALLINT AUTO_INCREMENT PRIMARY KEY, 
+# Nome_Filho VARCHAR(50), 
+# ID_Pai SMALLINT, CONSTRAINT fk_id_pai FOREIGN KEY (ID_Pai) REFERENCES Pai(ID_Pai)
+# ON DELETE CASCADE ON UPDATE CASCADE );
+
+-- Aceita tanto " como ' para inserir VALUES
+# INSERT INTO Pai
+# VALUES (1,'Milton'), (2,'Marçal'), (3,'Laertes'), (4,'Alexandre');
+# INSERT INTO Filho (Nome_Filho, ID_Pai)
+# VALUES ('Rafael',1), ('Kelly',1), ('Bolivar',2), ('Jaqueline',2), ('Marco',3);
+
+# RENAME TABLE Clientes TO meus_Clientes;
+
+# SELECT P.ID_Pai, P.Nome_Pai, F.ID_Filho, F.Nome_Filho
+# FROM Filho F
+# INNER JOIN Pai P
+# ON F.ID_Pai = P.ID_Pai;
+
+# SELECT pai.nome_pai, COUNT(filho.id_pai) AS numero_de_filhos
+# FROM filho 
+# INNER JOIN pai
+# ON pai.id_pai = filho.id_filho
+# GROUP BY filho.id_pai;
+
+# DELETE FROM pai WHERE nome_pai="Pai Locao" ;
+
+# UPDATE pai SET nome_pai="Milton De Luca" WHERE id_pai < 2 ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

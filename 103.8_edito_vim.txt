@@ -1,0 +1,42 @@
+103.8 Editores de texto vi/vim
+
+vi --version
+
+mode navegacao
+/palavra a ser localizada de cima para baixo [enter]
+n = next | N = next de baixo pra cima
+? palavra localizada de baixo para cima
+h = <-
+j = baixo - dedo indicador
+k= cima
+l = ->
+
+mode de insercao = tecla i ou insert
+
+o- inserir a partir da linha de baixo
+O - inserir a partir da linha de cima
+a - editar a partir do proximo caracter
+A - editar a partir da fim da linha
+
+v - ativa o mode de seleção, usa os direcionais para selecionar e depois copia e cola
+cc - cut
+p - paste
+dd - corta a linha atual:
+d10d - corta as 10 proximas linhas
+yy - copy
+y5y - copia as 5 proximas linhas
+
+:w - salvar
+:q - sair
+:q! - forcar a saida sem salvar
+
+Maneiras de salvar e sair
+:wq! - salvar e forcar saida
+:x - salvar e sair
+ZZ - salvar e sair
+
+entrar direto no vi e depois salvar o arquivo
+vi
+esc :w nome-do-arquivo.txt
+echo "Inserir conteudo no final" >> nome-do-arquivo.txt
+:e  ou :e! = vai atualizar o arquivo

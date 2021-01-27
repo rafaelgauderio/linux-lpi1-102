@@ -1,0 +1,16 @@
+103.8 editor nano
+nano abre o arquivo em modo de edicao
+^ = crtl | M = alt
+
+crtl + g =  help
+crtl + x = close
+crtl + 0 = save
+crtl + c = cancel
+crtl + k = cut
+crtl + v = pagina posterior
+crtl + y = pagina anterior
+crtl + shift + underline + 8,3  = vai para linha 8, coluna 3
+crtl + w + [palavra] = vai para palavra
+
+alt + / = final
+alt + \ (barra invertida) = inicio
