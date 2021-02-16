@@ -295,6 +295,33 @@ rafael   : xxxxx : 1000	   : 1000	: Rafael Lu : /home/rafael    : /bin/bash
 ------------------------------------------------------------------
 		AGENDAMENTO DE TAREFAS - CRON
 
+# ps axu | grep cron
+# systemctl status cron
+# systemctl start cron
+# systemctl is-enable cron
+# systemctl enable cron
+# vi /etc/crontab
+	- cada linha é um agendamento
+	- * = todo dia	- 0 a 7 = segunda a domingo
+# run-parts - executa tudo que estiver em um diretório específico
+# cd /etc	# ls -ld cron*
+# cd /etc/cron.hourly - tudo que estiver nesse diretório vai executar a cada hora
+# cd /etc/cron.d - onde ficam os agendamentos
+# crontab -l - ver os agendamentos do usuário
+# crontab -l -u rafael - apenas o root lista os outros usuários
+# crontab -e - entra em modo de edição
+	./10 - executa o script a cada 10 minutos
+# crontab -r - remove o crontab
+# crontab arquivo-cron.sh - importa o conteúdo desse arquivo para o crotab do usuário
+# cd /var/spool/cron/crontabs	- onde ficam as configurações dos usuários
+	-  por padrão todos os usuários podem usar o cron, mas podemos mudar isso
+# vi /etc/cron.allow - se editado, somente users deste arquivo podem usar o crontabl
+# vi /etc/cron.denny - Só é proibido o uso do crontabl quem estiver nessa lista
+	- allow >> deny com relação a prioridade
+
+
+
+
 
 
 
