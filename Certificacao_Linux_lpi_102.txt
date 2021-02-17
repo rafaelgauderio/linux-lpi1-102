@@ -375,6 +375,38 @@ rafael   : xxxxx : 1000	   : 1000	: Rafael Lu : /home/rafael    : /bin/bash
 ------------------------------------------------------------------
 107.3 LOCALIZAÇÃO E INTERCIONALIZAÇÃO
 
+# timedatectl
+# less /etc/localtime	- arquivo binário troca utc para localtime
+# cd /usr/share/zoneinfo/	# ls- lrt
+# ls -l /etc/localtime
+# cat /etc/timezone	- mudar a sua localizacao no SO
+# tzselect	- ajuda a selecionar via opcoes de escolha na tela
+# echo $TZ	- variável TZ define o horário da seção
+# export TZ=America/Chicago	# date
+# unset TZ	- remove o TZ=America/Chicago	# date
+	- É possível definir timezones diferentes para usuários diferentes
+# TZ=:/usr/share/zoneinfo/America/Sao_Paulo
+# cd /usr/share
+# rm -fiv /etc/localtime
+# ln -s /usr/share/zoneinfo/Asia/Bangkok /etc/localtime		- faz um link alias
+# ls -l /etc/localtime
+# timedatectl	- Principal é o /etc/localtime
+# locale - o que está sendo setado no ambiente
+# locale -a	- mostra as opcoes disponíveis do locale
+# env | grep "^LC"	- tudo que começa com LC
+	- vairlvel $LC_ALL	- sobrescreve todas as demais
+# export LC_ALL=en_US.UTF-8
+# gnome-calculator
+# unset LC_ALL
+	- Gerar um arquivo no windows para depois converter em linux
+# cat arquivo-teste-win.txt
+# file arquivo-teste-win.txt	- tipo ISO-8859
+# icon -f ISO-8849-1 -t UTF-8 arquivo-teste-win.txt > novo_arquivo
+------------------------------------------------------------------
+108. SERVIÇOS ESSENCIAIS
+
+
+
 
 
 
