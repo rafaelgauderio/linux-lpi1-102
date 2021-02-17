@@ -319,6 +319,85 @@ rafael   : xxxxx : 1000	   : 1000	: Rafael Lu : /home/rafael    : /bin/bash
 # vi /etc/cron.denny - Só é proibido o uso do crontabl quem estiver nessa lista
 	- allow >> deny com relação a prioridade
 
+------------------------------------------------------------------
+107. AGENDAMENTO DE TAREFAS
+
+# atq == at -l	- lista os jobs agendados
+# at now +30mim		# at 13:30
+# sutdown -h now
+# at midning	# at teatime	# at noon
+# at 02:20pm 05202021 [comandos]
+# apt-get install at
+# atrm 12 - remove o job de id=12
+# at -d 10 - remov eo job de id=10
+# cat /etc/at.allow	- tem que criar, senão apenas o root consegue usar o at
+# vi /etc/at/deny	- somente listados não usam o at
+	AGENDAMENTO SYSTEMD TIMER
+# cd /etc/systemd/system
+# systemctl List-timers - lista agendamento do sistema das tarefas
+# systemctl unit=apt-daily.timer	- agenda a execucao do apt-daily.service
+# systemctl List-timer --all		- losta até os agendamentos de tarefas inativas
+# sytemctl List-units --type=timer
+# systemctl status apt-daily-upgrade.timer
+# cat /lib/systemd/sytem/apt-daily-upgrade.timer
+# vi /lib/systemd/sytem/apt-daily-upgrde.service
+# man systemd.timers
+# man systemd.time	- detalhes de como espeficar a hora no calendar
+# system status systemd-tmpfiles-clean.timer	- pega o nome do arquivo
+# vi /lib/system/system/systemd-tmpfiles/clean.timer	- limpa a pasta /tmp periodicamente
+# vi /lib/system/system/systemd-tmpfiles/clean.service
+# man systemd.service
+	CRIANDO O PRÓPRIO SERVICO
+# cd /etc/systemd/system
+# vi Exemplo.service	Criando o Serivo
+	[Unit]
+	Description=Exemplo Systemd-times
+	[Service]
+	Type=Oneshot
+	ExecStart=/bin/bash -c '/bin/date >> /tmp/Exemplo-systemd.txt'
+	:wq
+# vi Exemplo.timer
+	[Unit]
+	Description=Teste Exemplo Unit
+	[Timer]
+	OnCalendar=*:*:10
+	Accuracy=1us
+	Unit=teste.service
+# systemctl start Exemplo.time
+# systemctl List-timer
+# systemctç daemon-reload	- reler as configurações
+# cat /tmp/Exemplo-systemd.txt
+# system-run --help
+# date; systemd-run -on-active=60 --timer-property=AccuracySec=1ms
+	/bin*touch /tmp/Exemplo-run.txt
+# journalctl -u run-r [codigo_do_servico].timer
+
+------------------------------------------------------------------
+107.3 LOCALIZAÇÃO E INTERCIONALIZAÇÃO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
