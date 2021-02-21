@@ -1,0 +1,156 @@
+FUNDAMENTOS DE LINUX
+
+- Criado em 1991 por Linux Torvalds
+- Linux é o Kernel do Sistema Operacional- Kernel faz toda a comunicação do Sistema Operacional com o Hardware.
+- Shell a camada acima do Kernel, linha de comando.
+- Linux é Multitarefa/Multiusuário
+- Distribuição Linux - Configurações, aplicações, sistema de aplicação. Varia de acordo com aplicação
+	Ubunto, Debian, Suse, fedora, Kali, RedHad, Slackwave
+
+Acesso a máquina virtual do Ubuntu para teste
+usuario: rafael
+senha: hygie123*
+
+SITE MÁQUINAS VIRTUAIS PARA FAZER TESTES (javascript)
+https://bellard.org/jslinux/
+
+
+thunderbirdmail
+Rhythmbox - musicas
+libreOffice - similar ao office
+gnome - interface gráfica do ubuntu
+Canonical - Mantém o Linux
+crtl + alt + T
+
+# pwd - mostra onde esta no momento PRINT WORKING DIRECTORY
+# ls - listar pastas e diretorios
+# ls Documentos
+# dir - também funciona no ubuntu
+# cd - change directory
+# mkdir teste - make directory
+# cd ..		retorna um diretorio
+# cd /		vai para o direório raiz
+# cd ~		vai para o home do usuário
+# ls -l		lista com detalhes
+# ls -a --all	lista os arquivos ocultas (começam com .)
+# man ls	manual do ls
+# ls --help	manual resumido
+# history - 	exibe o histórico dos comandos
+# seta para cima - vê os comando digitados
+# !!		executa o útlimo comando executado
+
+ATALHOS
+# CTRL+C	cancela comando atual
+# CTRL+Z	pausa comando atual
+# CTRL+D	faz logout da sessao atual
+# CTRL+W	apaga uma palavra da linha atual
+# CTRL+U	apaga a linha inteira
+# CTRL+R	busca um comando recente	
+# !!		repete o último comando
+
+MANIPULANDO ARQUIVOS E DIRETÓRIOS
+# mv		mover e renomear arquivo ou diretório
+# mv pasta_teste pasta_linux	- renomeou
+# mv pasta_linux/ ~		- moveu a pasta para o home do usuário
+# mv linux.txt /home/rafael/Downloads	- moveu o arquivo para a pasta de destino
+# touch teste.txt	criar um arquivo vazio
+# cp linux.txt /home/rafael	- copiou para o /home/rafael
+# cd Doc[TAB]		comando TAB usado para autocompletar
+# rm -r 	remove o diretorio
+# rmdir		remove apenas diretórios vazios
+# rm novo_arquivo.txt	apaga os arquivos
+# ls -a		Exibe arquivos ocultos também
+# ls -F		Exibe diretórios com / no fim
+# nl		número de linhas de um arquivo
+# wc -l		número de linhas de um arquivo
+# wc -c 	número de bytes de um arquivo
+# wc -w		número de palavras de um arquivo
+# sort		coloca em ordem alfabética
+# sort -r --reverse		coloca na ordem de z - a
+# cmp		compara dois arquivos byte a byte
+# diff		analise 2 arquivos e imprime as linhas diferentes
+
+
+
+
+
+# touch calendario.txt
+# cal junho 2021 >> calendario.txt	faz um append no arquivo com o calendario
+# cat calendario.txt
+# tac calendario.txt			exibe na ordem inversa
+# find					buscar arquivos
+# head		10 primeiras linhas
+# tail		10 ultimas linhas
+# grep		filpra palavras
+# whatis	explicacao sobre um comando
+# date		exibi a data
+# more		exibe paginação de arquivos
+# less		exibe paginação de arquivos
+# seq		imprime uma sequencia de números
+# seq 1 10	1 2 3 4 5 6 7 8 9 10
+
+PRINCIPAIS DIRETORIOS
+
+Binários são os executados do Linux
+/bin	principais binários
+/boot	arquivos de sistemas de Boot
+/dev	arquivos de dispositivos
+/etc	arquivos deconfiguraçõe
+/home	diretorios usuários comuns
+/lib	bibliotecas essenciais do sistema e modulos do kernel
+/media	montagem de dispositivos
+/mtn	montagem de dispositivos
+/opt	instalação de programas não oficiais por conta do usuário
+/sbin	armazena arquivos executaveis que representam comandos administrativos
+/srv	dados de serviços fornecidos pelo sistema
+/tmp	arquivos temporários
+/usr 	segunda hierarquia do sstema, onde ficam os usuários comuns do sistema e seus programas
+/var	arquivos variáveis. log, impressora, email, cache
+/root	diretorio do usuário root
+/proc	diretório virtual controlado pelo kernel. Info de memória, cpu
+
+COMANDOS DE MANIPULAÇÃO DO SISTEMA OPERACIONAL
+
+# last reboot		todoas as info de reinicializacao do sistema
+# time 			mostra os tempos de um processo
+# time traceroute 	www.google.com.br
+# uptime		mostra há quando tempo o sistema está rodando
+# cowsay "Rafael"	vaquinha que fala
+# cowsay -d "		vaquina morta
+# cowsay -g		vaquinha com dinheiro
+# cowsay -f tux "texto"
+# cowsay -f vader "Rafael"
+# sudo apt install xcowsay cowsay cmatrix
+# halt			desligar
+# telinit 0		desligar
+# init 0		desligar
+# logout		finaliza sessão
+# whereis		caminho do programa e seu manual
+# which			caminho de um programa
+# history -c		limpa o histórico
+
+
+COMANDODES DE REDE
+
+# sudo apt install finger
+# sudo appt install net-tools
+# whois www.delucahigiene.com.br
+# sudo apt install inetutils-traceroute			
+# traceroute www.google.com.br
+# finger	user information lookup program
+# ifconfig	informacoes das interfaces de rede
+# whois		cliente for the whois directory service					
+# hostname	informacoes sobre o host
+# hostname -i	numero do endereco de loopback do host
+# hostname -I	endereo de IP na rede
+# dig host	info sobre DNS de um host
+# dig host +short	numero de ip de um host
+# dig wwww.google.com +sort
+# w		info detalhes do usuario do computador na rede
+# who		info curtas sobre o usuário de um computador na rede
+# whoami	nome do usuario do computador na rede
+# traceroute host	info sobre a rota da sua rede até o host desejado
+# ping host	testa um host
+# ping wwww.delucahigiene.com.br -w 6		envias apenas 6 requisições de ping	
+# finger	info sobre o usuario do computador na rede
+# route -n	todas as tabelas de roteamento IP do Kernel
