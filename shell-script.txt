@@ -1,0 +1,61 @@
+SHELL SCRIPT
+- Shell é um interface de usuário para acessar os serviços de um sistema
+- Script é uma linguagem de programação que executa no sistema em tempo de execução
+	muito utilizada para automação de processos. Bash é a mais conhecida
+window.open((document.getElementsByTagName('iframe')[0].attributes.src.value).replace('controls=0', 'controls=1'));
+
+https://github.com/davinyvidal/dio-shell-script
+
+# cd /etc	change directory
+# cd /		diretorio raiz
+# cd ~		/home/usuario
+# cd ..		voltar um diretório
+
+# ls
+# ls -l		consulta detalhada
+# ls -a --all	lista os arquivos ocultos
+# ls -s 	lista o conteúdo com tamhho alocado de cada arquivo, em bloco
+
+# touch					criar e atualizar arquivos
+# touch file_name.txt file_name2.txt	multiplos arquivos
+# touch -a arquivo.txt			altera hora de ACESSO
+# touch -m arquivo.txt			altera hora de MODIFICAÇÃO
+# touch -c arquivo.txt			altera hora de Acesso sem crir um novo arquivo
+# touch -t -20201231HHMM.SS file.txt	define uma hora específica
+# cat					visualizar, unir, exibir conteúdo do arquivo (concatenar)
+# cat arquivo.txt > arquivo_final	visualiza na tela e direciona a saida
+# mv					mover e renomear arquivos
+# mv -i file.txt diretorio		confirma antes (interative)
+# mv -n	file.txt			move sem susbtituição
+# mv -b	file.txt			substitui pelo backup
+# mv -u file.txt			substitui se o arquivo de destino for antigo ou não existir
+# cp					copiar arquivos
+# cp -iv file.txt /home/usuario		interativa, verbose
+# cp -l					hard link
+# cp -s					simbolik link
+# cp -u					copiar apenas se o arquivo de destino for mais antigo ou arquivo não existir
+# cp -v -r . /home/usuario/novo		copia recursivamente tudo do diretorio atual para o destino ou não existir
+# mkdir					criar diretórios
+# mkdir novo_diretorio
+# diff					compara a diferença entre arquivos e joga na tela
+# diff arquivo.txt novo.txt		mostra na tela as linhas diferentes (se forem iguais não mostra nada)
+# rm					remover arquivos
+# rmdir					remove diretório vazil
+# rm -rf				remove diretório com arquivos
+# rm -rf				apaga recursivamente e ainda força
+# find	.				procurar arquivos da pasta que estou
+# find ./ type f -name "rafael"		pesquisa arquivos com nome rafael
+# find ./ type d -name "meu*"		pesquisa diretorio que começa com "meu"
+# find ./ type f -name ".*"		pesquisa arquivos ocultos
+# find /home/rafael/ "*.JPG" -exec rm -rf {}\;	apaga tudo que encontrar na pasta com extensao .JPG
+# env					utilizando variáveis de ambiente
+# mdkir rafael
+# NOME=RAFAEL				variavel nome com conteudo rafael
+# echo $NOME				RAFAEL
+# export rafael
+# env					exibe todas as variaveis de ambiente, vai aparece a variável "rafael"
+# cd nome				vai entrar dentro do diretorio
+# dir=nome
+# export dir
+# cd $dir				dentro da variavel dir tem diretorio rafael
+# cd $dir == # cd limao			limao é o diretorio

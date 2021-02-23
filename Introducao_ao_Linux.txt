@@ -1,4 +1,4 @@
-FUNDAMENTOS DE LINUX
+﻿FUNDAMENTOS DE LINUX
 
 - Criado em 1991 por Linux Torvalds
 - Linux é o Kernel do Sistema Operacional- Kernel faz toda a comunicação do Sistema Operacional com o Hardware.
@@ -154,3 +154,54 @@ COMANDODES DE REDE
 # ping wwww.delucahigiene.com.br -w 6		envias apenas 6 requisições de ping	
 # finger	info sobre o usuario do computador na rede
 # route -n	todas as tabelas de roteamento IP do Kernel
+
+
+
+GERENCIAMENTO DE PACOTES
+Pacotes são programas colocados dentro de um arquivo e identificados por sua extensão
+apt gerencia pacote e dpkg instala pacotes .deb
+sites para baixar pacotes
+https://pkgs.org
+https://rpm.pbone.net
+
+# sudo su				- elevacao de privilégios
+# apt install nmap
+# sudo apt install wireshark
+# apt upgrade nmap
+# apt remove nmap
+# apt update && apt upgrade		- baixa e instala as atualizacoes do sistema operacional
+
+
+INSTALAR PACOTES .deb
+# cd /home/usuario/Downloads
+# dpkg -i docker-ce-cli..._amd64.deb		instalacao do pacote
+# dpkg -I pacote.deb				descrição do pacote
+# dpkg -I pacote.deb | more			descrevendo e paginando (aparece o nome do pacote)
+# dpkg -r nome_do_pacote			remoção do pacote, não coloca o .deb
+# dpkg -r docker-ce-cli
+
+FEDORA - GERENCIAMENTO DE PACOTES
+https://fedora.pkgs.org
+https://getfedora.org
+yum gerencia pacotes e rpm instala pacotes .rpm
+
+# rpm -ivh pacote.rpm				instalacao de pacote
+# rpm -ivh postgis25_...x86_64.rpm
+# rpm -U pacote.rpm				atualizacao de pacote
+# rpm -e pacote.rpm				remocao de pacote
+
+# yum install pacote
+# yum install postgresql
+# yum update postgresql				atualização de pacote
+# yum remove postgresql				remover de pacote
+
+
+
+
+
+
+							
+
+
+ 
+
